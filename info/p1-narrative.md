@@ -18,6 +18,9 @@ Brendon Smith
   - [Map](#map)
 - [Responsive design](#responsive-design)
   - [Simple structure and styling](#simple-structure-and-styling)
+  - [CSS Grid](#css-grid)
+- [Accessibility](#accessibility)
+- [Offline availability](#offline-availability)
 
 ## Getting started
 
@@ -47,5 +50,51 @@ Brendon Smith
   - Here's how it's looking now:
 
     ![Screen shot after adjusting HTML and CSS](img/Screen-shot-2018-07-06-at-21.18.15.png)
+
+- Git commit at this point: Style homepage header and footer 83fe5d7
+
+### CSS Grid
+
+- I opted to use CSS Grid for layout and responsive design.
+- I started with the [Wes Bos CSS grid course](https://cssgrid.io/).
+- I also reviewed the [MDN CSS Layout Guide](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout).
+- I changed the restaurant list from an unordered list to a container div, then styled the container into a grid.
+- I changed this line in *index.html*:
+
+  ```html
+  <ul id="restaurant-list"></ul>
+  ```
+
+- To this:
+
+  ```html
+  <div class="container" id="restaurant-list"></div>
+  ```
+
+- And then styled the container with CSS:
+
+  ```css
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 0.2rem;
+    border: var(--border);
+  }
+  ```
+
+- This results in a nice grid:
+
+  ![Screen shot of restaurant list with CSS grid](img/Screen-shot-2018-07-06-at-22.57.25.png)
+
+#### TODO
+
+- [ ] grid container
+- [ ] create three columns
+- [ ] use `fr` to lay out columns
+- [ ] Rewrite `fillRestaurantsHTML` and `createRestaurantHTML` in *main.js* to create `div`s instead of `ul`/`li`?
+
+## Accessibility
+
+## Offline availability
 
 [(Back to top)](#top)
