@@ -82,15 +82,27 @@ Brendon Smith
   }
   ```
 
-- This results in a nice grid:
+- This results in a nice grid for the restaurants:
 
   ![Screen shot of restaurant list with CSS grid](img/Screen-shot-2018-07-06-at-22.57.25.png)
 
+- Git commit: Add CSS Grid for homepage restaurants bd154fd
+- Next, I made the restaurant grid responsive.
+  - Use auto-fill and minmax for responsive reflowing
+  - Trim unneccessary CSS
+  - Organize CSS, img, and JS in /assets
+- Git commit: Responsively reflow restaurant grid
+- Next, I formatted the entire page as a grid, and made the restaurant list a nested grid.
+
 #### TODO
 
-- [ ] grid container
-- [ ] create three columns
-- [ ] use `fr` to lay out columns
+- [x] grid container
+- [ ] Set height of divs: header 2, map 5, filter 1, restaurants remainder, footer 1
+- [ ] map minmax
+- [x] create three columns
+- [x] use `fr` to lay out columns
+- [ ] Move both filter dropdowns onto same new row
+- [ ] Fix spacing in restaurant grid so the restaurants don't overlap
 - [ ] Rewrite `fillRestaurantsHTML` and `createRestaurantHTML` in *main.js* to create `div`s instead of `ul`/`li`?
 
 ## Accessibility

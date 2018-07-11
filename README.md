@@ -21,6 +21,12 @@ Brendon Smith
 
 ## Description
 
+This is a web application that displays a list of restaurants and associated information. I completed this as project 1 of my [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024). The project had three parts:
+
+1. **Responsive design**
+2. **Accessibility features**
+3. **Offline capability**
+
 ## Repository contents
 
 - [css](css)
