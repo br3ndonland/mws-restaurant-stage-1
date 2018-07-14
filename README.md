@@ -21,7 +21,9 @@ Brendon Smith
 
 ## Description
 
-This is a web application that displays a list of restaurants and associated information. I completed this as project 1 of my [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024). The project had three parts:
+This is a web application that displays a list of restaurants and associated information. I completed this as project 1 of my [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024).
+
+Project 1 had three parts:
 
 1. **Responsive design**
 2. **Accessibility features**
@@ -29,15 +31,17 @@ This is a web application that displays a list of restaurants and associated inf
 
 ## Repository contents
 
-- [css](css)
-  - [styles.css](css/styles.css): Styles used in application.
+- [assets](assets)
+  - [css](assets/css)
+    - [styles.css](assets/css/styles.css): Styles used in application.
+  - [img](assets/img)
+  - [js](assets/js)
+    - [main.js](assets/js/main.js): JavaScript for application homepage.
+    - [restaurant_info.js](assets/js/restaurant_info.js): JavaScript for restaurant details page.
+    - [dbhelper.js](assets/js/dbhelper.js): Service Worker for offline caching.
 - [data](data)
   - [restaurants.json](data/restaurants.json): Restaurant data in JSON format.
-- [img](img)
-- [info](info): Project documentation
-- [js](js)
-  - [main.js](js/main.js): JavaScript for application homepage.
-  - [restaurant_info.js](js/restaurant_info.js): JavaScript for restaurant details page.
+- [info](info): Project documentation.
 - [.gitignore](.gitignore): Instructions to Git to exclude certain files from commits.
 - [index.html](index.html): Application homepage.
 - [restaurant.html](restaurant.html): Restaurant details page.
