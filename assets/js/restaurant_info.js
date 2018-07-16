@@ -1,4 +1,9 @@
-// Initialize map as soon as the page is loaded.
+// ~~~~~~~~~~~~~~~~~~~~ JavaScript for restaurant pages ~~~~~~~~~~~~~~~~~~~~ //
+
+// Register service worker
+// TODO
+
+// Initialize map as soon as the page is loaded
 document.addEventListener('DOMContentLoaded', (event) => {
   initMap()
 })
@@ -6,7 +11,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 // Initialize leaflet map
 const initMap = () => {
   fetchRestaurantFromURL((error, restaurant) => {
-    if (error) { // Got an error!
+    if (error) {
       console.error(error)
     } else {
       self.newMap = L.map('map', {
