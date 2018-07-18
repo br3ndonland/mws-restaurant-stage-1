@@ -1,0 +1,153 @@
+/* ~~~~~~~~~~~~~~~~~~~ Styles for restaurant reviews app ~~~~~~~~~~~~~~~~~~~ */
+
+/* CSS custom properties (variables) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+:root {
+  --background: #252831;
+  --background-text: #aaa;
+  --text: #252831;
+  --link: #ddd;
+  --blue: #3397db;
+  --border: 0.2rem solid #ddd;
+}
+/* General styling ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+html {
+  box-sizing: border-box;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	background-color: var(--background-text);
+  color: var(--text);
+}
+a {
+	color: var(--link);
+	text-decoration: none;
+}
+a:hover, a:focus {
+	color: var(--blue);
+	text-decoration: none;
+}
+img {
+  border-top-left-radius: 1rem;
+  max-width: 100%;
+}
+blockquote {
+  font-style: italic;
+  border-left: 0.1rem solid var(--text);
+  margin: 0;
+  padding: 0.2rem;
+}
+/* Header, footer, and filter ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+header, footer, .filter {
+  background-color: var(--background);
+  color: var(--background-text);
+  text-align: center;
+  text-transform: uppercase;
+  margin: 0.5rem 0;
+}
+.header__text {
+  font-size: 5vmin;
+  font-weight: 200;
+  letter-spacing: 0.2rem;
+  padding: 1.5rem;
+}
+.footer__text {
+  font-size: 0.5rem;
+  letter-spacing: 0.1rem;
+  padding: 2rem;
+}
+.filter {
+  background-color: var(--background);
+  padding: 0.5rem;
+  align-items: center;
+}
+.filter h2 {
+  font-size: 4vmin;
+  font-weight: 200;
+  letter-spacing: 0.2rem;
+  padding: 0 2rem;
+  display: inline;
+}
+/* "Breadcrumb" path navigation bar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+nav {
+  display: grid;
+  justify-content: center;
+}
+.breadcrumb {
+  display: inline;
+}
+.breadcrumb__path:before {
+  content: "/\00a0";
+}
+.breadcrumb a {
+  color: var(--blue);
+}
+.breadcrumb a:hover, a:focus {
+  color: var(--link);
+}
+/* Map ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.map {
+  height: 20rem;
+  width: 100%;
+  background-color: #ccc;
+}
+/* Restaurant listings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+.restaurants {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  grid-gap: 0.2rem;
+}
+.restaurant {
+  display: grid;
+  align-content: space-between;
+  border: var(--border);
+  border-top-left-radius: 1rem;
+  background-color: #f3f3f3;
+  margin: 1rem;
+  padding: 1rem;
+  font-size: 0.8rem;
+}
+.restaurant__header {
+  color: var(--blue);
+  font-weight: 200;
+  text-transform: uppercase;
+}
+.restaurant__neighborhood, .restaurant__address {
+  margin: 0;
+  font-size: 0.8rem;
+}
+.restaurant__more {
+  background-color: var(--blue);
+  color: var(--link);
+  height: 1.2rem;
+  margin: 1rem 0 0;
+  padding: 0.2rem 1rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+.restaurant__more:hover, .restaurant__more:focus {
+  color: #f3f3f3;
+}
+.restaurant__info {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 0.2rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+.reviews {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 0.2rem;
+}
+/* Media query to scale up restaurant details page on larger displays */
+@media (min-width: 768px) {
+  .restaurant {
+    font-size: 1rem;
+  }
+  .restaurant__info {
+    grid-template-columns: 15rem 1fr;
+    justify-items: end;
+  }
+  .reviews {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
