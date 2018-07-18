@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Ajax with Fetch</title>
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet">
+  <link href="static/css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <header class="masthead">
+    <h1>What are you interested in today?</h1>
+    <div class="site-container">
+      <form id="search-form" action="#">
+        <label for="search-keyword" class="visuallyhidden">What are you interested in today?</label>
+        <input id="search-keyword" type="text" name="search-keyword" placeholder="e.g. Android" required>
+        <input id="submit-btn" type="submit" value="Submit">
+      </form>
+    </div>
+  </header>
+  <div class="site-container">
+    <div id="response-container"></div>
+  </div>
+  <script src="static/js/ajax-3-fetch-app.js"></script>
+</body>
+</html>
