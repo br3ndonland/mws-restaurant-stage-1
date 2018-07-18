@@ -1,4 +1,5 @@
 // ~~~~~~~~~~~~~~~ Database helper for restaurant reviews app ~~~~~~~~~~~~~~ //
+
 class DBHelper {
   // JSON data location
   static get DATABASE_URL () {

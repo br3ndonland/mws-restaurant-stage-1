@@ -131,7 +131,7 @@ nav {
   grid-template-columns: 1fr;
   grid-gap: 0.2rem;
   margin-bottom: 1rem;
-  justify-items: end;
+  justify-content: center;
 }
 .reviews {
   display: grid;
@@ -145,6 +145,7 @@ nav {
   }
   .restaurant__info {
     grid-template-columns: 15rem 1fr;
+    justify-items: end;
   }
   .reviews {
     grid-template-columns: repeat(3, 1fr);

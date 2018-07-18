@@ -1,7 +1,14 @@
 // ~~~~~~~~~~~~~~~~~~~~ JavaScript for restaurant pages ~~~~~~~~~~~~~~~~~~~~ //
 
 // Register service worker
-// TODO
+if ('serviceWorker' in navigator) {
+  console.log(`Registering Service Worker.`)
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    console.log(`Service Worker registration successful for ${reg.scope}`)
+  }).catch(e => {
+    console.log(`Registration failed with error ${e}`)
+  })
+}
 
 // Initialize map as soon as the page is loaded
 document.addEventListener('DOMContentLoaded', (event) => {

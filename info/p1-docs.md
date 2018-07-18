@@ -6,7 +6,7 @@
 
 [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024)
 
-[Project 1. Restaurant Reviews app](https://github.com/br3ndonland/udacity-google-mws-p1)
+[Project 1. Restaurant Reviews app](https://github.com/br3ndonland/udacity-google-mws)
 
 Brendon Smith
 
