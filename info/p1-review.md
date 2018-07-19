@@ -72,3 +72,12 @@ Thanks for your time and feedback!
 > REQUIRED: Appropriate alternate text must be added. Images must have the restaurant name as alternate text.
 >
 > You may add like this: `image.alt = restaurant.name + " Restaurant"`
+
+## Submission 2
+
+### Notes to reviewer 2
+
+Thank you for your thorough and helpful review.
+
+- Included restaurant name in alt text with ES6 template literal
+- Added ARIA roles to breadcrumb and map

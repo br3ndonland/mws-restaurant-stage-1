@@ -56,7 +56,7 @@ Project 1 had three parts:
     - [restaurant_info.js](assets/js/restaurant_info.js): JavaScript for restaurant details page.
 - [data](data)
   - [restaurants.json](data/restaurants.json): Restaurant data in JSON format.
-- [info](info): Project documentation.
+- [info](info): Project documentation, reviews, and computational narratives.
 - [lessons](lessons): Lesson notes, divided into subdirectories for each part of the Nanodegree program.
 - [.gitignore](.gitignore): Instructions to Git to exclude certain files from commits.
 - [index.html](index.html): Application homepage.
