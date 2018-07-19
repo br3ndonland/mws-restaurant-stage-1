@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchCuisines()
 })
 
-// Initialize Leaflet map with function called from HTML.
+// Initialize Leaflet map with function called from HTML
 const initMap = () => {
   self.newMap = L.map('map', {
     center: [40.722216, -73.987501],
@@ -121,7 +121,7 @@ const createRestaurantHTML = (restaurant) => {
 
   const image = document.createElement('img')
   image.className = 'restaurant__img'
-  image.alt = 'Restaurant image'
+  image.alt = `Restaurant image for ${restaurant.name}.`
   image.src = DBHelper.imageUrlForRestaurant(restaurant)
   li.append(image)
 
@@ -158,7 +158,7 @@ const updateRestaurants = () => {
   const cuisine = cSelect[cIndex].value
   const neighborhood = nSelect[nIndex].value
   DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
-    if (error) { // Got an error!
+    if (error) {
       console.error(error)
     } else {
       resetRestaurants(restaurants)
