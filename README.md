@@ -19,10 +19,10 @@ Brendon Smith
 ## Table of Contents <!-- omit in toc -->
 
 - [Description](#description)
-  - [Scholarship](#scholarship)
-  - [Projects](#projects)
 - [Repository contents](#repository-contents)
-- [Instructions](#instructions)
+- [Projects](#projects)
+  - [Project 1](#project-1)
+  - [Project 2](#project-2)
 
 ## Description
 
@@ -30,25 +30,15 @@ This is a web application that displays a list of restaurants and associated inf
 
 ![Screenshot of restaurant reviews app homepage on desktop](info/img/udacity-google-mws-home-20180716.jpg)
 
-### Scholarship
-
 I was awarded a scholarship to this Nanodegree program after completing the [Udacity Grow with Google](https://www.udacity.com/grow-with-google) Scholarship challenge course, in the Intermediate Web Developer track. Materials from the challenge course are available in my [udacity-google repo](https://github.com/br3ndonland/udacity-google).
 
 ![Udacity Google Mobile Web Specialist scholarship email](info/img/udacity-google-mws-award.png)
-
-### Projects
-
-Project 1 had three parts:
-
-1. **Responsive design**
-2. **Accessibility features**
-3. **Offline capability**
 
 ## Repository contents
 
 - [assets](assets)
   - [css](assets/css)
-    - [styles.css](assets/css/styles.css): Styles used in application. Features CSS Grid and variables ("custom properties").
+    - [styles.css](assets/css/styles.css): Styles used in application. Features CSS Grid, variables ("custom properties"), and BEM (Block Element Modifier).
   - [img](assets/img): Images used in application.
   - [js](assets/js)
     - [dbhelper.js](assets/js/dbhelper.js): JavaScript class constructor with static methods to serve data to the app.
@@ -64,11 +54,23 @@ Project 1 had three parts:
 - [sw.js](sw.js): Service Worker for offline caching.
 - [README.md](README.md): This file, a concise description of the repository.
 
-## Instructions
+## Projects
 
-- Project 1: Run a local HTTP server to test the application. There are multiple pages, so it is helpful to run a server instead of directly opening the HTML in a browser.
+### Project 1
+
+Project 1 had three parts:
+
+1. **Responsive design**
+2. **Accessibility features**
+3. **Offline capability**
+
+Run a local HTTP server to test the application. There are multiple pages, so it is helpful to run a server instead of directly opening the HTML in a browser.
 
   ```sh
   cd <PATH>
   python3 -m http.server 8000
   ```
+
+### Project 2
+
+- In project 2, we use a Node server to deliver the data.

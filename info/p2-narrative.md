@@ -14,16 +14,66 @@ Brendon Smith
 
 ## Table of Contents <!-- omit in toc -->
 
+- [Getting started](#getting-started)
+- [Data](#data)
+  - [Server](#server)
+  - [Use IndexedDB to cache JSON responses](#use-indexeddb-to-cache-json-responses)
+- [Accessibility](#accessibility)
+- [Performance](#performance)
+  - [Building and bundling](#building-and-bundling)
 ## Getting started
 
 - As usual, I copied the project documentation and rubric HTML from the Udacity classroom, pasted it into [Turndown](https://domchristie.github.io/turndown/), and saved it in Markdown files.
 - We don't need to add the project 2 repo to our project. The project 2 repo is just a server that we use to fetch data.
+- I deleted my old `dev` branch, and created a new `dev` branch. Previously, you can see that I jumped over the "Submit project 1" commit back onto the old `dev` branch. This is why GitHub prompts users to delete branches after merging.
 
 ## Data
+
+### Server
+
+#### Server setup
+
+- The first step is to set up the development server for the restaurant data.
+- The project uses [Sails](https://sailsjs.com/), a Node.js MVC framework.
+- I got the development server up and running:
+
+  ```sh
+  cd udacity-google-mws-p2
+  npm i
+  npm i sails -g
+  node server
+  ```
+
+- The server runs on port 1337 (haha).
+- I could now `curl` data from the server
+
+  ```sh
+  curl "http://localhost:1337/restaurants"
+  curl "http://localhost:1337/restaurants/3"
+  ```
+
+#### Server usage
+
+- The next step is to reconfigure the app to fetch data from the server's API.
+- I changed the port in *dbhelper.js* to `1337` to work with the server.
+
+  ```js
+  static get DATABASE_URL () {
+    const port = 1337
+    return `http://localhost:${port}/restaurants`
+  }
+  ```
+
+### Use IndexedDB to cache JSON responses
+
+- I used [IndexedDB Promised](https://github.com/jakearchibald/idb) from Jake Archibald.
+- *TODO:* import idb
 
 ## Accessibility
 
 ## Performance
+
+### Building and bundling
 
 ## TODO
 
