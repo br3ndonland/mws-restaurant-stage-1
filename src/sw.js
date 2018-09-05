@@ -1,4 +1,5 @@
 // ~~~~~~~~~~~~~~~ Service Worker for restaurant reviews app ~~~~~~~~~~~~~~~ //
+/* eslint-env serviceworker */
 
 // Set up cache ID variable
 const cacheID = 'udacity-google-mws-v1'
@@ -33,9 +34,8 @@ self.addEventListener('install', event => {
     '/assets/img/9.jpg',
     '/assets/img/10.jpg',
     '/assets/js/dbhelper.js',
-    '/assets/js/main.js',
-    '/assets/js/restaurant_info.js',
-    '/data/restaurants.json'
+    '/assets/js/index.js',
+    '/assets/js/restaurant.js'
   ]
   console.log('Installing Service Worker and caching static assets')
   event.waitUntil(caches.open(cacheID).then(cache => {
