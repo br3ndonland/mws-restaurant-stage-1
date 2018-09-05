@@ -64,6 +64,22 @@ Brendon Smith
   }
   ```
 
+- I can now see JSON at [http://localhost:1337/restaurants](http://localhost:1337/restaurants).
+- I then fetched data from the Sails server with Async/Await.
+
+  ```js
+  // Static method to fetch restaurants
+  static async fetchRestaurants (callback) {
+    try {
+      const query = fetch(DBHelper.DATABASE_URL)
+      const restaurants = await (await query).json()
+      callback(null, restaurants)
+    } catch (e) {
+      throw Error(e)
+    }
+  }
+  ```
+
 ### Use IndexedDB to cache JSON responses
 
 - I used [IndexedDB Promised](https://github.com/jakearchibald/idb) from Jake Archibald.

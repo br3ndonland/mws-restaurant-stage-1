@@ -3,25 +3,27 @@
 class DBHelper {
   // JSON data location
   static get DATABASE_URL () {
-    const port = 8000
-    return `http://localhost:${port}/data/restaurants.json`
+    const port = 1337
+    return `http://localhost:${port}/restaurants`
+  }
+  // Static method to return URL for restaurant page
+  static urlForRestaurant (restaurant) {
+    return (`./restaurant.html?id=${restaurant.id}`)
+  }
+  // Static method to return URL for restaurant image
+  static imageUrlForRestaurant (restaurant) {
+    return (`/assets/img/${restaurant.id}.jpg`)
   }
 
   // Static method to fetch restaurants
-  static fetchRestaurants (callback) {
-    let xhr = new XMLHttpRequest()
-    xhr.open('GET', DBHelper.DATABASE_URL)
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const json = JSON.parse(xhr.responseText)
-        const restaurants = json.restaurants
-        callback(null, restaurants)
-      } else {
-        const error = (`Request failed. Returned status of ${xhr.status}`)
-        callback(error, null)
-      }
+  static async fetchRestaurants (callback) {
+    try {
+      const query = fetch(DBHelper.DATABASE_URL)
+      const restaurants = await (await query).json()
+      callback(null, restaurants)
+    } catch (e) {
+      throw Error(e)
     }
-    xhr.send()
   }
 
   // Static method to fetch restaurant by ID
@@ -34,7 +36,7 @@ class DBHelper {
         if (restaurant) {
           callback(null, restaurant)
         } else {
-          callback('Restaurant does not exist', null)
+          callback(null, 'Restaurant does not exist')
         }
       }
     })
@@ -116,16 +118,6 @@ class DBHelper {
     })
   }
 
-  // Static method to return URL for restaurant page
-  static urlForRestaurant (restaurant) {
-    return (`./restaurant.html?id=${restaurant.id}`)
-  }
-
-  // Static method to return URL for restaurant image
-  static imageUrlForRestaurant (restaurant) {
-    return (`/assets/img/${restaurant.photograph}`)
-  }
-
   // Static method to create map marker for restaurant
   // https://leafletjs.com/reference-1.3.0.html#marker
   static mapMarkerForRestaurant (restaurant, map) {
@@ -134,7 +126,7 @@ class DBHelper {
         alt: restaurant.name,
         url: DBHelper.urlForRestaurant(restaurant)
       })
-    marker.addTo(newMap)
+    marker.addTo(map)
     return marker
   }
 }
