@@ -3,10 +3,9 @@
 /* CSS custom properties (variables) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 :root {
   --background: #252831;
-  --background-text: #aaa;
+  --background-text: #BFBFBF;
   --text: #252831;
-  --link: #ddd;
-  --blue: #3397db;
+  --blue: #144B70;
   --border: 0.2rem solid #ddd;
 }
 /* General styling ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -18,8 +17,11 @@ html {
   color: var(--text);
 }
 a {
-	color: var(--link);
+	color: var(--text);
 	text-decoration: none;
+}
+.leaflet-container a {
+	color: var(--text);
 }
 a:hover, a:focus {
 	color: var(--blue);
@@ -48,6 +50,7 @@ header, footer, .filter {
   font-weight: 200;
   letter-spacing: 0.2rem;
   padding: 1.5rem;
+  color: var(--background-text)
 }
 .footer__text {
   font-size: 0.5rem;
@@ -81,7 +84,7 @@ nav {
   color: var(--blue);
 }
 .breadcrumb a:hover, a:focus {
-  color: var(--link);
+  color: var(--background-text);
 }
 /* Map ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 .map {
@@ -107,7 +110,8 @@ nav {
 }
 .restaurant__header {
   color: var(--blue);
-  font-weight: 200;
+  font-weight: 300;
+  letter-spacing: 0.1rem;
   text-transform: uppercase;
 }
 .restaurant__neighborhood, .restaurant__address {
@@ -116,7 +120,7 @@ nav {
 }
 .restaurant__more {
   background-color: var(--blue);
-  color: var(--link);
+  color: var(--background-text);
   height: 1.2rem;
   margin: 1rem 0 0;
   padding: 0.2rem 1rem;

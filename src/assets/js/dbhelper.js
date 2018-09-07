@@ -1,27 +1,64 @@
-// ~~~~~~~~~~~~~~~ Database helper for restaurant reviews app ~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~ Database helper for restaurant reviews app ~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 class DBHelper {
   // JSON data location
   static get DATABASE_URL () {
-    const port = 8000
-    return `http://localhost:${port}/data/restaurants.json`
+    const port = 1337
+    return `http://localhost:${port}/restaurants`
+  }
+  // Static method to return URL for restaurant page
+  static urlForRestaurant (restaurant) {
+    return (`./restaurant.html?id=${restaurant.id}`)
+  }
+  // Static method to return URL for restaurant image
+  static imageUrlForRestaurant (restaurant) {
+    return (`/assets/img/${restaurant.id}.jpg`)
   }
 
-  // Static method to fetch restaurants
-  static fetchRestaurants (callback) {
-    let xhr = new XMLHttpRequest()
-    xhr.open('GET', DBHelper.DATABASE_URL)
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const json = JSON.parse(xhr.responseText)
-        const restaurants = json.restaurants
+  // Static method to create IndexedDB database
+  static async createDatabase () {
+    try {
+      if ('indexedDB' in window) {
+        console.log('IndexedDB available.')
+        // Create IndexedDB
+        const db = await idb.open('udacity-google-mws-idb', 1, upgradeDb => {
+          upgradeDb.createObjectStore('restaurants', {autoIncrement: true})
+        })
+        // Store JSON in IndexedDB
+        const query = fetch(DBHelper.DATABASE_URL)
+        const restaurants = await (await query).json()
+        const tx = db.transaction('restaurants', 'readwrite')
+        const store = tx.objectStore('restaurants')
+        await store.put(restaurants)
+        console.log('IndexedDB creation successful.')
+      } else {
+        console.log('IndexedDB not available.')
+      }
+    } catch (e) {
+      throw Error(e)
+    }
+  }
+
+  // Static method to fetch data from IDB if present, else fetch from server API
+  static async fetchRestaurants (callback) {
+    try {
+      const db = await idb.open('udacity-google-mws-idb', 1)
+      const tx = db.transaction('restaurants', 'readonly')
+      const store = tx.objectStore('restaurants')
+      const data = await store.getAll()
+      if (data.length > 0) {
+        let restaurants = data[0]
+        console.log('Reading data from IndexedDB.')
         callback(null, restaurants)
       } else {
-        const error = (`Request failed. Returned status of ${xhr.status}`)
-        callback(error, null)
+        const query = fetch(DBHelper.DATABASE_URL)
+        let restaurants = await (await query).json()
+        console.log('Reading data from server API.')
+        callback(null, restaurants)
       }
+    } catch (e) {
+      throw Error(e)
     }
-    xhr.send()
   }
 
   // Static method to fetch restaurant by ID
@@ -34,7 +71,7 @@ class DBHelper {
         if (restaurant) {
           callback(null, restaurant)
         } else {
-          callback('Restaurant does not exist', null)
+          callback(null, 'Restaurant does not exist')
         }
       }
     })
@@ -116,16 +153,6 @@ class DBHelper {
     })
   }
 
-  // Static method to return URL for restaurant page
-  static urlForRestaurant (restaurant) {
-    return (`./restaurant.html?id=${restaurant.id}`)
-  }
-
-  // Static method to return URL for restaurant image
-  static imageUrlForRestaurant (restaurant) {
-    return (`/assets/img/${restaurant.photograph}`)
-  }
-
   // Static method to create map marker for restaurant
   // https://leafletjs.com/reference-1.3.0.html#marker
   static mapMarkerForRestaurant (restaurant, map) {
@@ -134,7 +161,7 @@ class DBHelper {
         alt: restaurant.name,
         url: DBHelper.urlForRestaurant(restaurant)
       })
-    marker.addTo(newMap)
+    marker.addTo(map)
     return marker
   }
 }
