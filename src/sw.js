@@ -33,6 +33,9 @@ self.addEventListener('install', event => {
     '/assets/img/8.jpg',
     '/assets/img/9.jpg',
     '/assets/img/10.jpg',
+    '/assets/img/favicon.ico',
+    '/assets/img/icons-192.jpg',
+    '/assets/img/icons-512.jpg',
     '/assets/js/dbhelper.js',
     '/assets/js/index.js',
     '/assets/js/restaurant.js'

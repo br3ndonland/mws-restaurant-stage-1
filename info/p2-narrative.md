@@ -19,7 +19,9 @@ Brendon Smith
   - [Server](#server)
   - [Use IndexedDB to cache JSON responses](#use-indexeddb-to-cache-json-responses)
 - [Performance](#performance)
+  - [Lighthouse](#lighthouse)
   - [Building and bundling](#building-and-bundling)
+
 ## Getting started
 
 - As usual, I copied the project documentation and rubric HTML from the Udacity classroom, pasted it into [Turndown](https://domchristie.github.io/turndown/), and saved it in Markdown files.
@@ -187,6 +189,43 @@ Brendon Smith
 
 ## Performance
 
+### Lighthouse
+
+#### Criteria
+
+- **Performance** ≥70
+- **Progressive Web App** ≥90
+- **Accessibility** ≥90
+
+#### Testing
+
+##### First round
+
+- **Performance** 88
+  - *Defer render-blocking resources*
+    - The Mapbox JS is supposed to be in the `head`, but it was slowing down page render. I simply added `defer`.
+- **PWA** 73
+  - *Add manifest*
+    - Created a *manifest.json* file.
+    - Added `<meta name="theme-color" content="#BFBFBF">` to HTML to match `theme_color` specified in manifest.
+  - Add app icons
+- **Accessibility** 83
+  - *Increase color contrast*
+    - Used the [color picker tool](https://dequeuniversity.com/rules/axe/2.2/color-contrast?application=lighthouse) linked from the Lighthouse audit to adjust colors to a contrast ratio ≥8:1.
+    - Added a new `leaflet-container` class to the CSS to override the Mapbox CSS for links.
+  - *Add labels to form elements*
+    - Added `aria-label="neighborhoods"` to `select` elements.
+
+##### Second round
+
+- **Performance** 94
+- **PWA** 92
+- **Accessibility** 100
+
+#### Resources
+
+- Doug Brown [Project 2 walkthrough](https://www.youtube.com/watch?v=Q2CJYf_XA58) starting at 0.28.45.
+
 ### Building and bundling
 
 I tried working with modules and bundlers, but realized I didn't need them for this project.
@@ -238,22 +277,3 @@ I tried working with modules and bundlers, but realized I didn't need them for t
   ```
 
 - [Parcel Babel instructions](https://parceljs.org/transforms.html#babel)
-
-## TODO
-
-- [Udacity MWS Darren walkthrough](https://www.youtube.com/watch?v=S7UGidduflQ)
-
-### Offline
-
-### Performance
-
-- [ ] Images
-  - [ ] [webp](https://developers.google.com/speed/webp/) images?
-- [ ] Accessibility
-  - [ ] Leaflet: just override the map `<a>` with a darker color and you should get it back, that was all I had to do
-- [ ] Lighthouse
-  - [ ] Audits tab in Chrome
-  - [ ] [Check Lighthouse score by CI](https://medium.freecodecamp.org/how-to-make-sure-your-progressive-web-app-keeps-its-lighthouse-audit-score-4c11cf514e1a)?
-- [ ] Google Maps static API?
-- [ ] Lazy loading?
-- [ ] Build tools?

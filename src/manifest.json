@@ -1,0 +1,20 @@
+{
+  "short_name": "Restaurants",
+  "name": "Udacity Google Mobile Web Specialist Restaurant Reviews app",
+  "icons": [
+    {
+      "src": "/assets/img/icons-192.jpg",
+      "type": "image/jpg",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/assets/img/icons-512.jpg",
+      "type": "image/jpg",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.html",
+  "background_color": "#252831",
+  "theme_color": "#BFBFBF",
+  "display": "standalone"
+}
