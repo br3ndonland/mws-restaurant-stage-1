@@ -1,4 +1,4 @@
-// ~~~~~~~~~~~~~~~~~~~~ JavaScript for restaurant pages ~~~~~~~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JavaScript for restaurant pages ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 // Register service worker
 if ('serviceWorker' in navigator) {
@@ -11,7 +11,8 @@ if ('serviceWorker' in navigator) {
 }
 
 // Initialize map as soon as the page is loaded
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', () => {
+  DBHelper.createDatabase()
   initMap()
 })
 

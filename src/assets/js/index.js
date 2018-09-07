@@ -1,4 +1,4 @@
-// ~~~~~~~~~~~~~~~ JavaScript for restaurant reviews homepage ~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~ JavaScript for restaurant reviews homepage ~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 // Register service worker
 if ('serviceWorker' in navigator) {
@@ -11,7 +11,8 @@ if ('serviceWorker' in navigator) {
 }
 
 // Fetch neighborhoods and cuisines as soon as the page is loaded
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', () => {
+  DBHelper.createDatabase()
   initMap()
   fetchNeighborhoods()
   fetchCuisines()
@@ -83,7 +84,7 @@ const fetchCuisines = () => {
     }
   })
 }
-fillCuisinesHTML = (cuisines = self.cuisines) => {
+const fillCuisinesHTML = (cuisines = self.cuisines) => {
   const select = document.getElementById('cuisines-select')
   cuisines.forEach(cuisine => {
     const option = document.createElement('option')
@@ -94,7 +95,7 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
 }
 
 // Reset HTML and map markers
-resetRestaurants = (restaurants) => {
+const resetRestaurants = (restaurants) => {
   // Remove all restaurants
   self.restaurants = []
   const ul = document.getElementById('restaurant-list')

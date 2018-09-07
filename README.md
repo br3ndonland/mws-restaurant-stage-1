@@ -36,18 +36,19 @@ I was awarded a scholarship to this Nanodegree program after completing the [Uda
 
 ## Repository contents
 
+- [info](info): Project documentation, reviews, and computational narratives.
+- [lessons](lessons): Lesson notes, divided into subdirectories for each part of the Nanodegree program.
+- [src](src): Application source files.
 - [assets](assets)
   - [css](assets/css)
     - [styles.css](assets/css/styles.css): Styles used in application. Features CSS Grid, variables ("custom properties"), and BEM (Block Element Modifier).
   - [img](assets/img): Images used in application.
   - [js](assets/js)
     - [dbhelper.js](assets/js/dbhelper.js): JavaScript class constructor with static methods to serve data to the app.
-    - [main.js](assets/js/main.js): JavaScript for application homepage.
-    - [restaurant_info.js](assets/js/restaurant_info.js): JavaScript for restaurant details page.
+      - [index.js](assets/js/index.js): JavaScript for application homepage.
+      - [restaurant.js](assets/js/restaurant.js): JavaScript for restaurant details page.
 - [data](data)
   - [restaurants.json](data/restaurants.json): Restaurant data in JSON format.
-- [info](info): Project documentation, reviews, and computational narratives.
-- [lessons](lessons): Lesson notes, divided into subdirectories for each part of the Nanodegree program.
 - [.gitignore](.gitignore): Instructions to Git to exclude certain files from commits.
 - [index.html](index.html): Application homepage.
 - [restaurant.html](restaurant.html): Restaurant details page.

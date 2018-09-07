@@ -1,4 +1,4 @@
-// ~~~~~~~~~~~~~~~ Database helper for restaurant reviews app ~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~ Database helper for restaurant reviews app ~~~~~~~~~~~~~~~~~~~~~~~~ //
 
 class DBHelper {
   // JSON data location
@@ -15,12 +15,47 @@ class DBHelper {
     return (`/assets/img/${restaurant.id}.jpg`)
   }
 
-  // Static method to fetch restaurants
+  // Static method to create IndexedDB database
+  static async createDatabase () {
+    try {
+      if ('indexedDB' in window) {
+        console.log('IndexedDB available.')
+        // Create IndexedDB
+        const db = await idb.open('udacity-google-mws-idb', 1, upgradeDb => {
+          upgradeDb.createObjectStore('restaurants', {autoIncrement: true})
+        })
+        // Store JSON in IndexedDB
+        const query = fetch(DBHelper.DATABASE_URL)
+        const restaurants = await (await query).json()
+        const tx = db.transaction('restaurants', 'readwrite')
+        const store = tx.objectStore('restaurants')
+        await store.put(restaurants)
+        console.log('IndexedDB creation successful.')
+      } else {
+        console.log('IndexedDB not available.')
+      }
+    } catch (e) {
+      throw Error(e)
+    }
+  }
+
+  // Static method to fetch data from IDB if present, else fetch from server API
   static async fetchRestaurants (callback) {
     try {
-      const query = fetch(DBHelper.DATABASE_URL)
-      const restaurants = await (await query).json()
-      callback(null, restaurants)
+      const db = await idb.open('udacity-google-mws-idb', 1)
+      const tx = db.transaction('restaurants', 'readonly')
+      const store = tx.objectStore('restaurants')
+      const data = await store.getAll()
+      if (data.length > 0) {
+        let restaurants = data[0]
+        console.log('Reading data from IndexedDB.')
+        callback(null, restaurants)
+      } else {
+        const query = fetch(DBHelper.DATABASE_URL)
+        let restaurants = await (await query).json()
+        console.log('Reading data from server API.')
+        callback(null, restaurants)
+      }
     } catch (e) {
       throw Error(e)
     }
