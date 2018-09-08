@@ -1,2 +1,11 @@
 {
+  "standard.autoFixOnSave": true,
+  "standard.enable": true,
+  "standard.options": {
+    "env": {
+      "browser": true,
+      "node": false
+    },
+    "globals": ["DBHelper", "idb", "L", "newMap", "self"],
+  }
 }

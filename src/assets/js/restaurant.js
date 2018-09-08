@@ -75,7 +75,7 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   address.innerHTML = restaurant.address
 
   const image = document.getElementById('restaurant-img')
-  image.className = 'restaurant__img'
+  image.className = 'restaurant__img lazy'
   image.alt = `Restaurant image for ${restaurant.name}.`
   image.src = DBHelper.imageUrlForRestaurant(restaurant)
 
@@ -163,7 +163,7 @@ const fillBreadcrumb = (restaurant = self.restaurant) => {
 // Get a parameter by name from page URL
 const getParameterByName = (name, url) => {
   if (!url) { url = window.location.href }
-  name = name.replace(/[\[\]]/g, '\\$&')
+  name = name.replace(/[[\]]/g, '\\$&')
   const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`)
   const results = regex.exec(url)
   if (!results) { return null }
