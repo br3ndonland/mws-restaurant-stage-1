@@ -23,10 +23,11 @@ Brendon Smith
 - [Projects](#projects)
   - [Project 1](#project-1)
   - [Project 2](#project-2)
+  - [Project 3](#project-3)
 
 ## Description
 
-This is a web application that displays a list of restaurants and associated information. I completed this project for my [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024).
+This is a Progressive Web Application (PWA) that displays a list of restaurants and associated information. I completed this project for my [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024).
 
 ![Screenshot of restaurant reviews app homepage on desktop](info/img/udacity-google-mws-home-20180716.jpg)
 
@@ -36,9 +37,9 @@ I was awarded a scholarship to this Nanodegree program after completing the [Uda
 
 ## Repository contents
 
-- [info](info): Project documentation, reviews, and computational narratives.
-- [lessons](lessons): Lesson notes, divided into subdirectories for each part of the Nanodegree program.
-- [src](src): Application source files.
+- [info/](info): Project documentation, reviews, and computational narratives.
+- [lessons/](lessons): Lesson notes, divided into subdirectories for each part of the Nanodegree program.
+- [src/](src): Application source files.
   - [assets](assets)
     - [css](assets/css)
       - [styles.css](assets/css/styles.css): Styles used in application. Features CSS Grid, variables ("custom properties"), and BEM (Block Element Modifier).
@@ -49,6 +50,8 @@ I was awarded a scholarship to this Nanodegree program after completing the [Uda
       - [restaurant.js](assets/js/restaurant.js): JavaScript for restaurant details page.
   - [data](data)
     - [restaurants.json](data/restaurants.json): Restaurant data in JSON format.
+- [.babelrc](.babelrc): Configuration file for [Babel](https://babeljs.io/).
+- [.eslintrc](.eslintrc): Configuration file for [ESLint](https://eslint.org/). I use [JavaScript Standard Style](https://standardjs.com/) with the [vscode extension](https://marketplace.visualstudio.com/items?itemName=chenxsan.vscode-standardjs). The ESLint file is used by [Codacy](https://www.codacy.com/) for continuous integration of code quality reviews.
 - [.gitignore](.gitignore): Instructions to Git to exclude certain files from commits.
 - [index.html](index.html): Application homepage.
 - [restaurant.html](restaurant.html): Restaurant details page.
@@ -84,6 +87,7 @@ In project 2, we use a Node server to deliver the data API.
 - Start the data server:
 
   ```sh
+  cd <PATH>
   npm i
   npm i sails -g
   node server
@@ -117,3 +121,107 @@ My app's Lighthouse scores:
 - **Performance** 94
 - **PWA** 92
 - **Accessibility** 100
+
+### Project 3
+
+#### Data API setup
+
+We use a different Node server to deliver the data API.
+
+- Clone the [project 3 server repo](https://github.com/udacity/mws-restaurant-stage-3) into a separate directory.
+- Start the data server:
+
+  ```sh
+  cd <PATH>
+  npm i
+  npm i sails -g
+  node server
+  ```
+
+#### Data API endpoints
+
+- The app calls the data server on port `1337`.
+- The data server presents a JSON API.
+
+##### `GET`
+
+- Get all restaurants: `http://localhost:1337/restaurants/`
+- Get favorite restaurants: `http://localhost:1337/restaurants/?is_favorite=true`
+- Get a restaurant by id: `http://localhost:1337/restaurants/<restaurant_id>`
+- Get all reviews for a restaurant: `http://localhost:1337/reviews/?restaurant_id=<restaurant_id>`
+- Get all restaurant reviews: `http://localhost:1337/reviews/`
+  - Reviews are stored as JSON with the following format:
+
+    ```json
+    {
+      "restaurant_id": <restaurant_id>,
+      "name": <reviewer_name>,
+      "rating": <rating>,
+      "comments": <comment_text>
+    }
+    ```
+
+- Get a restaurant review by id: `http://localhost:1337/reviews/<review_id>`
+- Get all reviews for a restaurant: `http://localhost:1337/reviews/?restaurant_id=<restaurant_id>`
+
+##### `POST`
+
+- Create a new restaurant review: `http://localhost:1337/reviews/`
+  - Reviews are stored as JSON with the following format:
+
+    ```json
+    {
+      "restaurant_id": <restaurant_id>,
+      "name": <reviewer_name>,
+      "rating": <rating>,
+      "comments": <comment_text>
+    }
+    ```
+
+##### `PUT`
+
+- Favorite a restaurant: `http://localhost:1337/restaurants/<restaurant_id>/?is_favorite=true`
+- Un-favorite a restaurant: `http://localhost:1337/restaurants/<restaurant_id>/?is_favorite=false`
+- Update a restaurant review: `http://localhost:1337/reviews/<review_id>`
+  - Updated reviews have the following JSON format:
+
+    ```json
+    {
+      "name": <reviewer_name>,
+      "rating": <rating>,
+      "comments": <comment_text>
+    }
+    ```
+
+##### `DELETE`
+
+- Delete reviews: `http://localhost:1337/reviews/<review_id>`
+
+#### Web server
+
+- Start the web server in the *src/* subdirectory.
+
+  ```sh
+  cd <PATH>/src
+  python3 -m http.server 8000
+  ```
+
+- Browse to [localhost:8000](http://localhost:8000) to see the app.
+
+#### Reviews
+
+- This project adds review capabilities to the app.
+
+#### Performance in project 3
+
+We were required to meet Lighthouse performance benchmarks for progressive web apps:
+
+- **Performance** ≥90
+- **Progressive Web App** ≥90
+- **Accessibility** ≥90
+
+My app's Lighthouse scores:
+
+- **Performance**
+- **Progressive Web App**
+- **Accessibility**

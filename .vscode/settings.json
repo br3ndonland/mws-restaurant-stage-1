@@ -6,6 +6,6 @@
       "browser": true,
       "node": false
     },
-    "globals": ["DBHelper", "idb", "L", "newMap", "self"],
+    "globals": ["DBHelper", "idb", "L", "newMap", "self"]
   }
 }
