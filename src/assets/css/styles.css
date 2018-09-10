@@ -1,6 +1,6 @@
-/* ~~~~~~~~~~~~~~~~~~~ Styles for restaurant reviews app ~~~~~~~~~~~~~~~~~~~ */
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Styles for restaurant reviews app ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-/* CSS custom properties (variables) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* CSS custom properties (variables) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 :root {
   --background: #252831;
   --background-text: #BFBFBF;
@@ -8,7 +8,7 @@
   --blue: #3397db;
   --border: 0.2rem solid #3397db;
 }
-/* General styling ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* General styling ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 html {
   box-sizing: border-box;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
@@ -37,7 +37,7 @@ blockquote {
   margin: 0;
   padding: 0.2rem;
 }
-/* Header, footer, and filter ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Header, footer, and filter ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 header, footer, .filter {
   background-color: var(--background);
   color: var(--background-text);
@@ -74,7 +74,7 @@ select {
   background-color: var(--background-text);
   color: var(--background);
 }
-/* "Breadcrumb" path navigation bar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* "Breadcrumb" path navigation bar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 nav {
   display: grid;
   justify-content: center;
@@ -91,13 +91,13 @@ nav {
 .breadcrumb a:hover, a:focus {
   color: var(--background-text);
 }
-/* Map ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Map ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 .map {
   height: 20rem;
   width: 100%;
   background-color: #ccc;
 }
-/* Restaurant listings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* Restaurant listings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 .restaurants {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
@@ -118,6 +118,13 @@ nav {
   font-weight: 300;
   letter-spacing: 0.1rem;
   text-transform: uppercase;
+  display: inline;
+}
+.header--star {
+  border: 0.1rem solid var(--text);
+  vertical-align: top;
+  margin: 0.1rem;
+  cursor: pointer;
 }
 .restaurant__neighborhood, .restaurant__address {
   margin: 0;
@@ -147,7 +154,7 @@ nav {
   grid-template-columns: 1fr;
   grid-gap: 0.2rem;
 }
-/* Media query to scale up restaurant details page on larger displays */
+/* Media query to scale up restaurant details page on larger displays ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 @media (min-width: 768px) {
   .restaurant {
     font-size: 1rem;

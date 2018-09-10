@@ -17,8 +17,10 @@ Brendon Smith
 - [Getting started](#getting-started)
 - [Favorites](#favorites)
   - [Favorite button](#favorite-button)
+  - [Favorite status in database](#favorite-status-in-database)
 - [Reviews](#reviews)
-  - [Add reviews](#add-reviews)
+  - [User interface for reviews](#user-interface-for-reviews)
+  - [Review submission](#review-submission)
 - [Performance](#performance)
 
 ## Getting started
@@ -31,15 +33,19 @@ Brendon Smith
 
 ### Favorite button
 
-- I plan to create a favorite button with *index.js* in the `createRestaurantHTML()` function.
+- I created a favorite button with *index.js* in the `createRestaurantHTML()` function.
+  - I used the HTML unicode character [white star `&#9734;`](https://unicode-table.com/en/2606/).
+  - I included an if/then statement to change to the [black star `&#9733`](https://unicode-table.com/en/2605/) when the restaurant is favorited.
+
+### Favorite status in database
 
 ## Reviews
 
-### Add reviews
-
-#### User interface
+### User interface for reviews
 
 I plan to use a [Bootstrap-style modal](https://getbootstrap.com/docs/4.1/components/modal/).
+
+### Review submission
 
 ## Performance
 

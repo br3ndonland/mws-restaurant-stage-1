@@ -126,10 +126,21 @@ const createRestaurantHTML = (restaurant) => {
   image.src = DBHelper.imageUrlForRestaurant(restaurant)
   li.append(image)
 
+  const header = document.createElement('div')
   const name = document.createElement('h2')
   name.innerHTML = restaurant.name
   name.className = 'restaurant__header'
-  li.append(name)
+  const favoriteButton = document.createElement('button')
+  favoriteButton.className = 'restaurant__header header--star'
+  if (restaurant.favorite === 'true') {
+    favoriteButton.innerHTML = '&#9733'
+    favoriteButton.setAttribute('aria-label', `Remove ${restaurant.name} from favorites`)
+  } else {
+    favoriteButton.innerHTML = '&#9734'
+    favoriteButton.setAttribute('aria-label', `Add ${restaurant.name} to favorites`)
+  }
+  header.append(name, favoriteButton)
+  li.append(header)
 
   const neighborhood = document.createElement('p')
   neighborhood.innerHTML = restaurant.neighborhood
