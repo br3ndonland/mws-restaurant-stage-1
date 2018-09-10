@@ -5,8 +5,8 @@
   --background: #252831;
   --background-text: #BFBFBF;
   --text: #252831;
-  --blue: #144B70;
-  --border: 0.2rem solid #ddd;
+  --blue: #3397db;
+  --border: 0.2rem solid #3397db;
 }
 /* General styling ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 html {
@@ -46,16 +46,16 @@ header, footer, .filter {
   margin: 0.5rem 0;
 }
 .header__text {
-  font-size: 5vmin;
-  font-weight: 200;
+  font-size: 4vmin;
+  font-weight: 300;
   letter-spacing: 0.2rem;
-  padding: 1.5rem;
+  padding: 1.2rem;
   color: var(--background-text)
 }
 .footer__text {
-  font-size: 0.5rem;
+  font-size: 2.5vmin;
   letter-spacing: 0.1rem;
-  padding: 2rem;
+  padding: 1.2rem;
   color: var(--background-text)
 }
 .filter {
@@ -69,6 +69,10 @@ header, footer, .filter {
   letter-spacing: 0.2rem;
   padding: 0 2rem;
   display: inline;
+}
+select {
+  background-color: var(--background-text);
+  color: var(--background);
 }
 /* "Breadcrumb" path navigation bar ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 nav {
@@ -110,7 +114,7 @@ nav {
   font-size: 0.8rem;
 }
 .restaurant__header {
-  color: var(--blue);
+  color: var(--text);
   font-weight: 300;
   letter-spacing: 0.1rem;
   text-transform: uppercase;
@@ -120,7 +124,7 @@ nav {
   font-size: 0.8rem;
 }
 .restaurant__more {
-  background-color: var(--blue);
+  background-color: var(--text);
   color: var(--background-text);
   height: 1.2rem;
   margin: 1rem 0 0;
