@@ -164,4 +164,26 @@ class DBHelper {
     marker.addTo(map)
     return marker
   }
+
+  // Static method to toggle favorite status of a restaurant by clicking the star button
+  static async toggleFavorite (restaurant) {
+    try {
+      // TODO: Enable offline toggle capability, use format for database creation above
+      const query = fetch(`${DBHelper.DATABASE_URL}/${restaurant.id}/?${restaurant.is_favorite === 'true' ? 'is_favorite=false' : 'is_favorite=true'}`, {method: 'PUT'})
+      const response = await (await query).json()
+      restaurant.is_favorite = response.is_favorite
+      const favoriteButton = document.getElementById(`restaurant-${restaurant.id}`)
+      console.log(`This is restaurant ID ${restaurant.id}`)
+      if (restaurant.is_favorite === 'true') {
+        favoriteButton.innerHTML = '&#9733'
+        favoriteButton.setAttribute('aria-label', `Remove ${restaurant.name} from favorites`)
+      } else {
+        favoriteButton.innerHTML = '&#9734'
+        favoriteButton.setAttribute('aria-label', `Add ${restaurant.name} to favorites`)
+      }
+      console.log(`Favorite status for ${restaurant.name}: ${restaurant.is_favorite}`)
+    } catch (e) {
+      throw Error(e)
+    }
+  }
 }
