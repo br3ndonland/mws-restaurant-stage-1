@@ -98,8 +98,8 @@ const fillCuisinesHTML = (cuisines = self.cuisines) => {
 const resetRestaurants = (restaurants) => {
   // Remove all restaurants
   self.restaurants = []
-  const ul = document.getElementById('restaurant-list')
-  ul.innerHTML = ''
+  const list = document.getElementById('restaurant-list')
+  list.innerHTML = ''
   // Remove all map markers
   if (self.markers) {
     self.markers.forEach(marker => marker.remove())
@@ -110,21 +110,21 @@ const resetRestaurants = (restaurants) => {
 
 // Create HTML for restaurants
 const fillRestaurantsHTML = (restaurants = self.restaurants) => {
-  const ul = document.getElementById('restaurant-list')
+  const list = document.getElementById('restaurant-list')
   restaurants.forEach(restaurant => {
-    ul.append(createRestaurantHTML(restaurant))
+    list.append(createRestaurantHTML(restaurant))
   })
   addMarkersToMap()
 }
 const createRestaurantHTML = (restaurant) => {
-  const li = document.createElement('div')
-  li.className = 'restaurant'
+  const div = document.createElement('div')
+  div.className = 'restaurant'
 
   const image = document.createElement('img')
   image.className = 'restaurant__img lazy'
   image.alt = `Restaurant image for ${restaurant.name}.`
   image.src = DBHelper.imageUrlForRestaurant(restaurant)
-  li.append(image)
+  div.append(image)
 
   const header = document.createElement('div')
   const name = document.createElement('h2')
@@ -132,34 +132,36 @@ const createRestaurantHTML = (restaurant) => {
   name.className = 'restaurant__header'
   const favoriteButton = document.createElement('button')
   favoriteButton.className = 'restaurant__header header--star'
-  if (restaurant.favorite === 'true') {
+  favoriteButton.id = `restaurant-${restaurant.id}`
+  if (restaurant.is_favorite === 'true') {
     favoriteButton.innerHTML = '&#9733'
     favoriteButton.setAttribute('aria-label', `Remove ${restaurant.name} from favorites`)
   } else {
     favoriteButton.innerHTML = '&#9734'
     favoriteButton.setAttribute('aria-label', `Add ${restaurant.name} to favorites`)
   }
+  favoriteButton.addEventListener('click', () => DBHelper.toggleFavorite(restaurant))
   header.append(name, favoriteButton)
-  li.append(header)
+  div.append(header)
 
   const neighborhood = document.createElement('p')
   neighborhood.innerHTML = restaurant.neighborhood
   neighborhood.className = 'restaurant__neighborhood'
-  li.append(neighborhood)
+  div.append(neighborhood)
 
   const address = document.createElement('p')
   address.innerHTML = restaurant.address
   address.className = 'restaurant__address'
-  li.append(address)
+  div.append(address)
 
   const more = document.createElement('a')
   more.innerHTML = 'View Details'
   more.className = 'restaurant__more'
   more.setAttribute('aria-label', 'details button')
   more.href = DBHelper.urlForRestaurant(restaurant)
-  li.append(more)
+  div.append(more)
 
-  return li
+  return div
 }
 
 // Update page and map for current restaurants
