@@ -22,6 +22,8 @@ Brendon Smith
   - [Fetch reviews from updated server API](#fetch-reviews-from-updated-server-api)
   - [Fetch reviews from IndexedDB](#fetch-reviews-from-indexeddb)
   - [User interface for adding reviews](#user-interface-for-adding-reviews)
+- [`POST` requests](#post-requests)
+  - [Favorite submission](#favorite-submission)
   - [Review submission](#review-submission)
 - [Performance](#performance)
 
@@ -70,14 +72,11 @@ Brendon Smith
     }
     ```
 
-- Next, I need to check for IndexedDB and put changes there.
-  - See the [Doug Brown project 3 walkthrough](https://www.youtube.com/watch?v=a7i0U1aCBok) 0.23.30
-
 ## Reviews
 
 ### Fetch reviews from updated server API
 
-- This is where it gets complicated. I wasn't able to continue following Doug Brown's walkthrough very well without reviews functions, so I decided to proceed by fetching the reviews next.
+- This is where it gets complicated. I wasn't able to continue following Doug Brown's walkthrough very well without reviews functions, so I decided to proceed by fetching the reviews next. I will handle the favorite and review submission later.
 - I refactored some of *restaurant.html* to look closer to *index.html* by moving more of the HTML generation to *restaurant.js*. I updated the CSS accordingly.
 - In project 2, the reviews were appended to the restaurant JSON. In project 3, the reviews are in a separate JSON API.
   - I set up a reviews variable in *dbhelper.js*:
@@ -176,7 +175,19 @@ Brendon Smith
 
 ### User interface for adding reviews
 
-I plan to use a [Bootstrap-style modal](https://getbootstrap.com/docs/4.1/components/modal/).
+- I created an overlay for adding reviews.
+- I added `<form class="overlay d-none" id="overlay-div"></form>` to *restaurant.html* as a placeholder, and programmatically created the HTML from within *restaurant.js*.
+- I show and hide the overlay by using a function to toggle `d-none` when the `addReview` link in the header is clicked:
+
+  ```js
+  addReview.addEventListener('click', () => overlayDiv.classList.toggle('d-none'))
+  ```
+
+## `POST` requests
+
+### Favorite submission
+
+- See the [Doug Brown project 3 walkthrough](https://www.youtube.com/watch?v=a7i0U1aCBok) 0.23.30
 
 ### Review submission
 

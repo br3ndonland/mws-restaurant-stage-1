@@ -41,11 +41,11 @@ const initMap = () => {
 // Add markers for current restaurants to the map
 const addMarkersToMap = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
-    const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.newMap)
-    marker.on('click', onClick)
-    function onClick () {
+    const marker = DBHelper.mapMarker(restaurant, self.newMap)
+    const onClick = () => {
       window.location.href = marker.options.url
     }
+    marker.on('click', onClick)
     self.markers.push(marker)
   })
 }
@@ -124,7 +124,6 @@ const createRestaurantHTML = (restaurant) => {
   image.className = 'restaurant__img lazy'
   image.alt = `Restaurant image for ${restaurant.name}.`
   image.src = DBHelper.imageUrlForRestaurant(restaurant)
-  div.append(image)
 
   const header = document.createElement('div')
   header.className = 'restaurant__header'
@@ -143,29 +142,25 @@ const createRestaurantHTML = (restaurant) => {
   }
   favoriteButton.addEventListener('click', () => DBHelper.toggleFavorite(restaurant))
   header.append(name, favoriteButton)
-  div.append(header)
 
   const detailsDiv = document.createElement('div')
-
   const infoDiv = document.createElement('div')
   const neighborhood = document.createElement('p')
   neighborhood.textContent = restaurant.neighborhood
   neighborhood.className = 'restaurant__neighborhood'
-  infoDiv.append(neighborhood)
   const address = document.createElement('p')
   address.textContent = restaurant.address
   address.className = 'restaurant__address'
-  infoDiv.append(address)
+  infoDiv.append(neighborhood, address)
   detailsDiv.append(infoDiv)
-
-  div.append(detailsDiv)
 
   const more = document.createElement('a')
   more.textContent = 'View Details'
   more.className = 'restaurant__more'
   more.setAttribute('aria-label', 'details button')
   more.href = DBHelper.urlForRestaurant(restaurant)
-  div.append(more)
+
+  div.append(image, header, detailsDiv, more)
 
   return div
 }

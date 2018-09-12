@@ -38,7 +38,7 @@ const initMap = () => {
         id: 'mapbox.light'
       }).addTo(newMap)
       fillBreadcrumb()
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap)
+      DBHelper.mapMarker(self.restaurant, self.newMap)
     }
   })
 }
@@ -97,7 +97,7 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   name.textContent = restaurant.name
   name.className = 'restaurant__header'
   const favoriteButton = document.createElement('button')
-  favoriteButton.className = 'restaurant__header header--star'
+  favoriteButton.classList.add('restaurant__header', 'header--star')
   favoriteButton.id = `restaurant-${restaurant.id}`
   if (restaurant.is_favorite === 'true') {
     favoriteButton.innerHTML = '&#9733'
@@ -108,26 +108,20 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   }
   favoriteButton.addEventListener('click', () => DBHelper.toggleFavorite(restaurant))
   header.append(name, favoriteButton)
-  div.append(header)
 
   const detailsDiv = document.createElement('div')
   detailsDiv.className = 'restaurant__info'
-
   const infoDiv = document.createElement('div')
   const cuisine = document.createElement('p')
   cuisine.className = 'restaurant__cuisine'
   cuisine.textContent = restaurant.cuisine_type
-  infoDiv.append(cuisine)
   const neighborhood = document.createElement('p')
   neighborhood.textContent = restaurant.neighborhood
   neighborhood.className = 'restaurant__neighborhood'
-  infoDiv.append(neighborhood)
   const address = document.createElement('p')
   address.textContent = restaurant.address
   address.className = 'restaurant__address'
-  infoDiv.append(address)
-  detailsDiv.append(infoDiv)
-
+  infoDiv.append(cuisine, neighborhood, address)
   const hours = document.createElement('table')
   if (restaurant.operating_hours) {
     const operatingHours = self.restaurant.operating_hours
@@ -142,37 +136,30 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
       hours.appendChild(row)
     }
   }
-  detailsDiv.append(hours)
-
   const image = document.createElement('img')
-  image.className = 'restaurant__img lazy'
+  image.classList.add('restaurant__img', 'lazy')
   image.alt = `Restaurant image for ${restaurant.name}`
   image.src = DBHelper.imageUrlForRestaurant(restaurant)
-  detailsDiv.append(image)
-
-  div.append(detailsDiv)
+  detailsDiv.append(infoDiv, hours, image)
 
   const map = document.createElement('div')
   map.className = 'map'
   map.id = 'map'
   map.role = 'application'
-  div.append(map)
 
   const reviewsHeader = document.createElement('div')
   reviewsHeader.className = 'restaurant__header'
   const title = document.createElement('h3')
-  title.className = 'restaurant__header header--reviews'
+  title.classList.add('restaurant__header', 'header--reviews')
   title.textContent = 'Reviews'
   const addReview = document.createElement('a')
   addReview.className = 'header--link'
   addReview.textContent = 'Add/edit'
   reviewsHeader.appendChild(title)
   reviewsHeader.appendChild(addReview)
-  div.append(reviewsHeader)
 
   const reviewsDiv = document.createElement('div')
   reviewsDiv.className = 'reviews'
-  div.append(reviewsDiv)
   // Fill reviews HTML
   let reviews = self.restaurant.reviews
   if (!reviews) {
@@ -187,25 +174,67 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
     const name = document.createElement('h4')
     name.textContent = review.name
     name.className = 'review__name'
-    reviewDiv.appendChild(name)
 
     const date = document.createElement('p')
     date.textContent = review.date
     date.className = 'review__date'
-    reviewDiv.appendChild(date)
 
     const rating = document.createElement('p')
     rating.textContent = `Rating: ${review.rating}`
     rating.className = 'review__rating'
-    reviewDiv.appendChild(rating)
 
     const comments = document.createElement('blockquote')
     comments.textContent = review.comments
     comments.className = 'review__comments'
-    reviewDiv.appendChild(comments)
 
+    reviewDiv.append(name, date, rating, comments)
     reviewsDiv.appendChild(reviewDiv)
-
     return reviewDiv
   })
+  div.append(header, detailsDiv, map, reviewsHeader, reviewsDiv)
+
+  // Overlay for adding or editing review
+  const overlayDiv = document.getElementById('overlay-div')
+  // Set overlay content
+  const nameDiv = document.createElement('div')
+  const reviewName = document.createElement('h4')
+  reviewName.textContent = 'Your name'
+  const nameInput = document.createElement('input')
+  nameInput.type = 'text'
+  nameInput.id = 'reviewName'
+  nameDiv.append(reviewName, nameInput)
+  const ratingDiv = document.createElement('div')
+  const ratingTitle = document.createElement('h4')
+  ratingTitle.textContent = 'Rating'
+  const ratingSelect = document.createElement('select')
+  ratingSelect.id = 'reviewRating'
+  const ratings = [1, 2, 3, 4, 5]
+  for (const rating of ratings) {
+    let option = document.createElement('option')
+    option.value = `${rating}`
+    option.textContent = rating
+    ratingSelect.append(option)
+  }
+  ratingDiv.append(ratingTitle, ratingSelect)
+  const commentsDiv = document.createElement('div')
+  const commentsTitle = document.createElement('h4')
+  commentsTitle.textContent = 'Comments'
+  const commentsText = document.createElement('textarea')
+  commentsText.classList.add('overlay__textarea')
+  commentsText.id = 'reviewComment'
+  commentsText.rows = '10'
+  commentsDiv.append(commentsTitle, commentsText)
+  const submitBtn = document.createElement('button')
+  submitBtn.className = 'restaurant__more'
+  submitBtn.textContent = 'Submit review'
+  /*
+  submitBtn.addEventListener('click', () => {
+    // send to db
+    // clear form
+  })
+   */
+  overlayDiv.append(nameDiv, ratingDiv, commentsDiv, submitBtn)
+  reviewsHeader.append(overlayDiv)
+  // Toggle visibility when addReview link is clicked
+  addReview.addEventListener('click', () => overlayDiv.classList.toggle('d-none'))
 }

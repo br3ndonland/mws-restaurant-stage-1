@@ -134,6 +134,7 @@ nav {
 }
 .header--link {
   float: right;
+  cursor: pointer;
 }
 .restaurant__address, .restaurant__neighborhood, .restaurant__cuisine {
   margin: 0;
@@ -146,6 +147,7 @@ nav {
   padding: 0.2rem 1rem;
   text-align: center;
   text-transform: uppercase;
+  cursor: pointer;
 }
 .restaurant__more:hover, .restaurant__more:focus {
   color: var(--white);
@@ -162,6 +164,24 @@ nav {
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 0.2rem;
+}
+.overlay {
+  background: var(--white);
+  border: var(--border);
+  border-top-left-radius: 1rem;
+  padding: 0.5rem 1rem;
+}
+.overlay__textarea {
+  border: var(--border);
+  border-top-left-radius: 1rem;
+  width: 95%;
+  display: block;
+  overflow: hidden;
+  resize: vertical;
+  font-size: 1rem;
+}
+.d-none {
+  display: none;
 }
 /* Media query to scale up restaurant details page on larger displays ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 @media (min-width: 768px) {
