@@ -20,6 +20,7 @@ Brendon Smith
   - [Favorite toggle](#favorite-toggle)
 - [Reviews](#reviews)
   - [Fetch reviews from updated server API](#fetch-reviews-from-updated-server-api)
+  - [Fetch reviews from IndexedDB](#fetch-reviews-from-indexeddb)
   - [User interface for adding reviews](#user-interface-for-adding-reviews)
   - [Review submission](#review-submission)
 - [Performance](#performance)
@@ -126,6 +127,50 @@ Brendon Smith
     static urlForRestaurant (restaurant) {
       const correctedId = restaurant.id - 1
       return (`./restaurant.html?id=${correctedId}`)
+    }
+    ```
+
+### Fetch reviews from IndexedDB
+
+- Next, I needed to fetch reviews from IndexedDB if available.
+  - This was much easier and only took me a few minutes.
+  - I considered making a separate `fetchReviews()` function, or adding the reviews fetch to `fetchRestaurants()`, but the callbacks make it too difficult.
+  - I ended up just nesting the reviews fetch under `fetchRestaurantById()`.
+  - The function looked like this:
+
+    ```js
+    // dbhelper.js
+    // Static method to fetch restaurant by ID
+    static fetchRestaurantById (id, callback) {
+      DBHelper.fetchRestaurants(async (error, restaurants) => {
+        if (error) {
+          callback(error, null)
+        } else {
+          const restaurant = restaurants[id]
+          // Fetch reviews by ID from IDB if present, else fetch from server API
+          const db = await idb.open('udacity-google-mws-idb', 1)
+          const tx = db.transaction('reviews', 'readonly')
+          const store = tx.objectStore('reviews')
+          const data = await store.getAll()
+          if (data.length > 0) {
+            let response = data[0]
+            console.log('Reading reviews from IndexedDB.')
+            const reviews = response.filter(review => review.restaurant_id === restaurant.id)
+            restaurant.reviews = reviews
+          } else {
+            const query = fetch(DBHelper.DATABASE_URL_REVIEWS)
+            let response = await (await query).json()
+            console.log('Reading reviews from server API.')
+            const reviews = response.filter(review => review.restaurant_id === restaurant.id)
+            restaurant.reviews = reviews
+          }
+          if (restaurant) {
+            callback(null, restaurant)
+          } else {
+            callback(null, 'Restaurant does not exist')
+          }
+        }
+      })
     }
     ```
 

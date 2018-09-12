@@ -37,7 +37,7 @@ class DBHelper {
         const restaurantsStore = restaurantsTx.objectStore('restaurants')
         await restaurantsStore.put(restaurants)
         // Store reviews JSON in IndexedDB
-        let reviewsQuery = fetch(DBHelper.DATABASE_URL_REVIEWS)
+        const reviewsQuery = fetch(DBHelper.DATABASE_URL_REVIEWS)
         const reviews = await (await reviewsQuery).json()
         const reviewsTx = db.transaction('reviews', 'readwrite')
         const reviewsStore = reviewsTx.objectStore('reviews')
@@ -60,7 +60,7 @@ class DBHelper {
       const data = await store.getAll()
       if (data.length > 0) {
         let restaurants = data[0]
-        console.log('Reading data from IndexedDB.')
+        console.log('Reading restaurant data from IndexedDB.')
         callback(null, restaurants)
       } else {
         const query = fetch(DBHelper.DATABASE_URL)
@@ -80,11 +80,23 @@ class DBHelper {
         callback(error, null)
       } else {
         const restaurant = restaurants[id]
-        // Fetch reviews by ID
+        // Fetch reviews by ID from IDB if present, else fetch from server API
+        const db = await idb.open('udacity-google-mws-idb', 1)
+        const tx = db.transaction('reviews', 'readonly')
+        const store = tx.objectStore('reviews')
+        const data = await store.getAll()
+        if (data.length > 0) {
+          let response = data[0]
+          console.log('Reading reviews from IndexedDB.')
+          const reviews = response.filter(review => review.restaurant_id === restaurant.id)
+          restaurant.reviews = reviews
+        } else {
         const query = fetch(DBHelper.DATABASE_URL_REVIEWS)
-        const response = await (await query).json()
+          let response = await (await query).json()
+          console.log('Reading reviews from server API.')
         const reviews = response.filter(review => review.restaurant_id === restaurant.id)
         restaurant.reviews = reviews
+        }
         if (restaurant) {
           callback(null, restaurant)
         } else {
