@@ -19,7 +19,8 @@ Brendon Smith
   - [Favorite button](#favorite-button)
   - [Favorite toggle](#favorite-toggle)
 - [Reviews](#reviews)
-  - [User interface for reviews](#user-interface-for-reviews)
+  - [Fetch reviews from updated server API](#fetch-reviews-from-updated-server-api)
+  - [User interface for adding reviews](#user-interface-for-adding-reviews)
   - [Review submission](#review-submission)
 - [Performance](#performance)
 
@@ -69,10 +70,66 @@ Brendon Smith
     ```
 
 - Next, I need to check for IndexedDB and put changes there.
+  - See the [Doug Brown project 3 walkthrough](https://www.youtube.com/watch?v=a7i0U1aCBok) 0.23.30
 
 ## Reviews
 
-### User interface for reviews
+### Fetch reviews from updated server API
+
+- This is where it gets complicated. I wasn't able to continue following Doug Brown's walkthrough very well without reviews functions, so I decided to proceed by fetching the reviews next.
+- I refactored some of *restaurant.html* to look closer to *index.html* by moving more of the HTML generation to *restaurant.js*. I updated the CSS accordingly.
+- In project 2, the reviews were appended to the restaurant JSON. In project 3, the reviews are in a separate JSON API.
+  - I set up a reviews variable in *dbhelper.js*:
+
+    ```js
+    static get DATABASE_URL_REVIEWS () {
+      const port = 1337
+      return `http://localhost:${port}/reviews`
+    }
+    ```
+
+  - I updated `DBHelper.createDatabase()` to fetch the reviews and put them into a separate IDB store. I'm not using the new IDB store yet, but I will get to it.
+- Next, when rendering the restaurant info page *restaurant.html*, I needed to fetch reviews specific to that restaurant.
+  - It was confusing and frustrating to figure this out. I had to spend several hours hacking and console logging, trying to follow all the functions and callbacks. The way Udacity wrote the code is non-linear and difficult to read. I considered refactoring the entire codebase, but decided it wouldn't be worth the effort at this point. I eventually had some success.
+  - I started at `restaurant.fetchRestaurantFromURL()`, which calls `DBHelper.fetchRestaurantById()`, which calls `DBHelper.fetchRestaurants()`.
+  - Within the call to `DBHelper.fetchRestaurants()` I added `self.restaurant.reviews = restaurant.reviews`, which will read reviews returned from the function and plug into the rest of the previously written code in *restaurant.js*.
+  - This means I need to pull review data into the `DBHelper.fetchRestaurants()` function. I decided to just work with the online data API itself right now, because trying to add in IDB calls at the same time would be too complicated. As a side benefit, I was finally able to delete the line with `==`. StandardJS prefers `===` over `==`, but when I tried to add `===` previously it was breaking the function. I was simply able to slice the array by `id`.
+
+    ```js
+    // dbhelper.js
+    // Static method to fetch restaurant by ID
+    static fetchRestaurantById (id, callback) {
+      DBHelper.fetchRestaurants(async (error, restaurants) => {
+        if (error) {
+          callback(error, null)
+        } else {
+          // const restaurant = restaurants.find(r => r.id == id)
+          const restaurant = restaurants[id]
+          // Fetch reviews by ID
+          const query = fetch(DBHelper.DATABASE_URL_REVIEWS)
+          const response = await (await query).json()
+          const reviews = response.filter(review => review.restaurant_id === restaurant.id)
+          restaurant.reviews = reviews
+          if (restaurant) {
+            callback(null, restaurant)
+          } else {
+            callback(null, 'Restaurant does not exist')
+          }
+        }
+      })
+    }
+    ```
+
+  - The restaurant array ID starts at zero, but the `restaurant_id` value for each review starts at 1. I addressed this discrepancy by updating `urlForRestaurant()`:
+
+    ```js
+    static urlForRestaurant (restaurant) {
+      const correctedId = restaurant.id - 1
+      return (`./restaurant.html?id=${correctedId}`)
+    }
+    ```
+
+### User interface for adding reviews
 
 I plan to use a [Bootstrap-style modal](https://getbootstrap.com/docs/4.1/components/modal/).
 

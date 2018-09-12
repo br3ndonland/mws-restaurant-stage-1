@@ -6,9 +6,14 @@ class DBHelper {
     const port = 1337
     return `http://localhost:${port}/restaurants`
   }
+  static get DATABASE_URL_REVIEWS () {
+    const port = 1337
+    return `http://localhost:${port}/reviews`
+  }
   // Static method to return URL for restaurant page
   static urlForRestaurant (restaurant) {
-    return (`./restaurant.html?id=${restaurant.id}`)
+    const correctedId = restaurant.id - 1
+    return (`./restaurant.html?id=${correctedId}`)
   }
   // Static method to return URL for restaurant image
   static imageUrlForRestaurant (restaurant) {
@@ -23,13 +28,20 @@ class DBHelper {
         // Create IndexedDB
         const db = await idb.open('udacity-google-mws-idb', 1, upgradeDb => {
           upgradeDb.createObjectStore('restaurants', {autoIncrement: true})
+          upgradeDb.createObjectStore('reviews', {autoIncrement: true})
         })
-        // Store JSON in IndexedDB
-        const query = fetch(DBHelper.DATABASE_URL)
-        const restaurants = await (await query).json()
-        const tx = db.transaction('restaurants', 'readwrite')
-        const store = tx.objectStore('restaurants')
-        await store.put(restaurants)
+        // Store restaurant JSON in IndexedDB
+        const restaurantsQuery = fetch(DBHelper.DATABASE_URL)
+        const restaurants = await (await restaurantsQuery).json()
+        const restaurantsTx = db.transaction('restaurants', 'readwrite')
+        const restaurantsStore = restaurantsTx.objectStore('restaurants')
+        await restaurantsStore.put(restaurants)
+        // Store reviews JSON in IndexedDB
+        let reviewsQuery = fetch(DBHelper.DATABASE_URL_REVIEWS)
+        const reviews = await (await reviewsQuery).json()
+        const reviewsTx = db.transaction('reviews', 'readwrite')
+        const reviewsStore = reviewsTx.objectStore('reviews')
+        await reviewsStore.put(reviews)
         console.log('IndexedDB creation successful.')
       } else {
         console.log('IndexedDB not available.')
@@ -39,7 +51,7 @@ class DBHelper {
     }
   }
 
-  // Static method to fetch data from IDB if present, else fetch from server API
+  // Static method to fetch restaurant data from IDB if present, else fetch from server API
   static async fetchRestaurants (callback) {
     try {
       const db = await idb.open('udacity-google-mws-idb', 1)
@@ -63,11 +75,16 @@ class DBHelper {
 
   // Static method to fetch restaurant by ID
   static fetchRestaurantById (id, callback) {
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.fetchRestaurants(async (error, restaurants) => {
       if (error) {
         callback(error, null)
       } else {
-        const restaurant = restaurants.find(r => r.id == id)
+        const restaurant = restaurants[id]
+        // Fetch reviews by ID
+        const query = fetch(DBHelper.DATABASE_URL_REVIEWS)
+        const response = await (await query).json()
+        const reviews = response.filter(review => review.restaurant_id === restaurant.id)
+        restaurant.reviews = reviews
         if (restaurant) {
           callback(null, restaurant)
         } else {
@@ -173,7 +190,6 @@ class DBHelper {
       const response = await (await query).json()
       restaurant.is_favorite = response.is_favorite
       const favoriteButton = document.getElementById(`restaurant-${restaurant.id}`)
-      console.log(`This is restaurant ID ${restaurant.id}`)
       if (restaurant.is_favorite === 'true') {
         favoriteButton.innerHTML = '&#9733'
         favoriteButton.setAttribute('aria-label', `Remove ${restaurant.name} from favorites`)

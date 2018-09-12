@@ -67,7 +67,7 @@ const fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
   const select = document.getElementById('neighborhoods-select')
   neighborhoods.forEach(neighborhood => {
     const option = document.createElement('option')
-    option.innerHTML = neighborhood
+    option.textContent = neighborhood
     option.value = neighborhood
     select.append(option)
   })
@@ -88,7 +88,7 @@ const fillCuisinesHTML = (cuisines = self.cuisines) => {
   const select = document.getElementById('cuisines-select')
   cuisines.forEach(cuisine => {
     const option = document.createElement('option')
-    option.innerHTML = cuisine
+    option.textContent = cuisine
     option.value = cuisine
     select.append(option)
   })
@@ -99,7 +99,7 @@ const resetRestaurants = (restaurants) => {
   // Remove all restaurants
   self.restaurants = []
   const list = document.getElementById('restaurant-list')
-  list.innerHTML = ''
+  list.textContent = ''
   // Remove all map markers
   if (self.markers) {
     self.markers.forEach(marker => marker.remove())
@@ -128,7 +128,7 @@ const createRestaurantHTML = (restaurant) => {
 
   const header = document.createElement('div')
   const name = document.createElement('h2')
-  name.innerHTML = restaurant.name
+  name.textContent = restaurant.name
   name.className = 'restaurant__header'
   const favoriteButton = document.createElement('button')
   favoriteButton.className = 'restaurant__header header--star'
@@ -145,17 +145,17 @@ const createRestaurantHTML = (restaurant) => {
   div.append(header)
 
   const neighborhood = document.createElement('p')
-  neighborhood.innerHTML = restaurant.neighborhood
+  neighborhood.textContent = restaurant.neighborhood
   neighborhood.className = 'restaurant__neighborhood'
   div.append(neighborhood)
 
   const address = document.createElement('p')
-  address.innerHTML = restaurant.address
+  address.textContent = restaurant.address
   address.className = 'restaurant__address'
   div.append(address)
 
   const more = document.createElement('a')
-  more.innerHTML = 'View Details'
+  more.textContent = 'View Details'
   more.className = 'restaurant__more'
   more.setAttribute('aria-label', 'details button')
   more.href = DBHelper.urlForRestaurant(restaurant)
