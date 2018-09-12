@@ -24,7 +24,7 @@ const initMap = () => {
     } else {
       self.newMap = L.map('map', {
         center: [restaurant.latlng.lat, restaurant.latlng.lng],
-        zoom: 12,
+        zoom: 13,
         scrollWheelZoom: false
       })
       L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
@@ -92,12 +92,6 @@ const fetchRestaurantFromURL = (callback) => {
 const fillRestaurantHTML = (restaurant = self.restaurant) => {
   const div = document.getElementById('restaurant-div')
 
-  const image = document.createElement('img')
-  image.className = 'restaurant__img lazy'
-  image.alt = `Restaurant image for ${restaurant.name}`
-  image.src = DBHelper.imageUrlForRestaurant(restaurant)
-  div.append(image)
-
   const header = document.createElement('div')
   const name = document.createElement('h2')
   name.textContent = restaurant.name
@@ -116,20 +110,23 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
   header.append(name, favoriteButton)
   div.append(header)
 
-  const cuisine = document.createElement('p')
-  cuisine.textContent = restaurant.cuisine_type
-  div.append(cuisine)
+  const detailsDiv = document.createElement('div')
+  detailsDiv.className = 'restaurant__info'
 
+  const infoDiv = document.createElement('div')
+  const cuisine = document.createElement('p')
+  cuisine.className = 'restaurant__cuisine'
+  cuisine.textContent = restaurant.cuisine_type
+  infoDiv.append(cuisine)
+  const neighborhood = document.createElement('p')
+  neighborhood.textContent = restaurant.neighborhood
+  neighborhood.className = 'restaurant__neighborhood'
+  infoDiv.append(neighborhood)
   const address = document.createElement('p')
   address.textContent = restaurant.address
   address.className = 'restaurant__address'
-  div.append(address)
-
-  const map = document.createElement('div')
-  map.className = 'map'
-  map.id = 'map'
-  map.role = 'application'
-  div.append(map)
+  infoDiv.append(address)
+  detailsDiv.append(infoDiv)
 
   const hours = document.createElement('table')
   if (restaurant.operating_hours) {
@@ -145,18 +142,24 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
       hours.appendChild(row)
     }
   }
-  div.append(hours)
+  detailsDiv.append(hours)
 
-  const reviewsDiv = document.createElement('div')
-  reviewsDiv.className = 'reviews'
-  div.append(reviewsDiv)
-  fillReviewsHTML()
-}
+  const image = document.createElement('img')
+  image.className = 'restaurant__img lazy'
+  image.alt = `Restaurant image for ${restaurant.name}`
+  image.src = DBHelper.imageUrlForRestaurant(restaurant)
+  detailsDiv.append(image)
 
-// Create reviews HTML and add to webpage
-const fillReviewsHTML = (reviews = self.restaurant.reviews) => {
-  const reviewsDiv = document.querySelector('.reviews')
+  div.append(detailsDiv)
+
+  const map = document.createElement('div')
+  map.className = 'map'
+  map.id = 'map'
+  map.role = 'application'
+  div.append(map)
+
   const reviewsHeader = document.createElement('div')
+  reviewsHeader.className = 'restaurant__header'
   const title = document.createElement('h3')
   title.className = 'restaurant__header header--reviews'
   title.textContent = 'Reviews'
@@ -165,8 +168,13 @@ const fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   addReview.textContent = 'Add/edit'
   reviewsHeader.appendChild(title)
   reviewsHeader.appendChild(addReview)
-  reviewsDiv.appendChild(reviewsHeader)
+  div.append(reviewsHeader)
 
+  const reviewsDiv = document.createElement('div')
+  reviewsDiv.className = 'reviews'
+  div.append(reviewsDiv)
+  // Fill reviews HTML
+  let reviews = self.restaurant.reviews
   if (!reviews) {
     const noReviews = document.createElement('p')
     noReviews.textContent = 'No reviews yet!'
@@ -174,33 +182,30 @@ const fillReviewsHTML = (reviews = self.restaurant.reviews) => {
     return
   }
   reviews.forEach(review => {
-    reviewsDiv.appendChild(createReviewHTML(review))
+    const reviewDiv = document.createElement('div')
+    reviewDiv.className = 'review'
+    const name = document.createElement('h4')
+    name.textContent = review.name
+    name.className = 'review__name'
+    reviewDiv.appendChild(name)
+
+    const date = document.createElement('p')
+    date.textContent = review.date
+    date.className = 'review__date'
+    reviewDiv.appendChild(date)
+
+    const rating = document.createElement('p')
+    rating.textContent = `Rating: ${review.rating}`
+    rating.className = 'review__rating'
+    reviewDiv.appendChild(rating)
+
+    const comments = document.createElement('blockquote')
+    comments.textContent = review.comments
+    comments.className = 'review__comments'
+    reviewDiv.appendChild(comments)
+
+    reviewsDiv.appendChild(reviewDiv)
+
+    return reviewDiv
   })
-}
-
-const createReviewHTML = (review) => {
-  const li = document.createElement('div')
-  li.className = 'review'
-
-  const name = document.createElement('h4')
-  name.textContent = review.name
-  name.className = 'review__name'
-  li.appendChild(name)
-
-  const date = document.createElement('p')
-  date.textContent = review.date
-  date.className = 'review__date'
-  li.appendChild(date)
-
-  const rating = document.createElement('p')
-  rating.textContent = `Rating: ${review.rating}`
-  rating.className = 'review__rating'
-  li.appendChild(rating)
-
-  const comments = document.createElement('blockquote')
-  comments.textContent = review.comments
-  comments.className = 'review__comments'
-  li.appendChild(comments)
-
-  return li
 }

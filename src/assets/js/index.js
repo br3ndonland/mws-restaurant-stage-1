@@ -127,6 +127,7 @@ const createRestaurantHTML = (restaurant) => {
   div.append(image)
 
   const header = document.createElement('div')
+  header.className = 'restaurant__header'
   const name = document.createElement('h2')
   name.textContent = restaurant.name
   name.className = 'restaurant__header'
@@ -144,15 +145,20 @@ const createRestaurantHTML = (restaurant) => {
   header.append(name, favoriteButton)
   div.append(header)
 
+  const detailsDiv = document.createElement('div')
+
+  const infoDiv = document.createElement('div')
   const neighborhood = document.createElement('p')
   neighborhood.textContent = restaurant.neighborhood
   neighborhood.className = 'restaurant__neighborhood'
-  div.append(neighborhood)
-
+  infoDiv.append(neighborhood)
   const address = document.createElement('p')
   address.textContent = restaurant.address
   address.className = 'restaurant__address'
-  div.append(address)
+  infoDiv.append(address)
+  detailsDiv.append(infoDiv)
+
+  div.append(detailsDiv)
 
   const more = document.createElement('a')
   more.textContent = 'View Details'

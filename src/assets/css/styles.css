@@ -2,10 +2,12 @@
 
 /* CSS custom properties (variables) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 :root {
+  --blue: #3397db;
+  --border: 0.2rem solid var(--dark);
+  --border-map: 0.2rem solid var(--blue);
   --dark: #252831;
   --light: #BFBFBF;
-  --blue: #3397db;
-  --border: 0.2rem solid var(--blue);
+  --white: #f3f3f3;
 }
 /* General styling ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 html {
@@ -93,8 +95,10 @@ nav {
 /* Map ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 .map {
   height: 20rem;
-  width: 100%;
-  background-color: #ccc;
+  width: 98%;
+  background-color: var(--white);
+  border: var(--border-map);
+  border-top-left-radius: 1rem;
 }
 /* Restaurant listings ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 .restaurants {
@@ -107,7 +111,7 @@ nav {
   align-content: space-between;
   border: var(--border);
   border-top-left-radius: 1rem;
-  background-color: #f3f3f3;
+  background-color: var(--white);
   margin: 1rem;
   padding: 1rem;
   font-size: 0.8rem;
@@ -120,7 +124,7 @@ nav {
 }
 .header--star {
   border: 0.1rem solid var(--dark);
-  vertical-align: top;
+  vertical-align: bottom;
   font-size: 0.8rem;
   margin: 0.1rem;
   cursor: pointer;
@@ -131,9 +135,8 @@ nav {
 .header--link {
   float: right;
 }
-.restaurant__neighborhood, .restaurant__address {
+.restaurant__address, .restaurant__neighborhood, .restaurant__cuisine {
   margin: 0;
-  font-size: 0.8rem;
 }
 .restaurant__more {
   background-color: var(--dark);
@@ -145,14 +148,14 @@ nav {
   text-transform: uppercase;
 }
 .restaurant__more:hover, .restaurant__more:focus {
-  color: #f3f3f3;
+  color: var(--white);
 }
 .restaurant__info {
   display: grid;
-  grid-template-columns: 1fr;
   grid-gap: 0.2rem;
   margin-bottom: 1rem;
   justify-content: center;
+  vertical-align: top;
 }
 .reviews {
   margin: 0.5rem 0;
@@ -166,8 +169,7 @@ nav {
     font-size: 1rem;
   }
   .restaurant__info {
-    grid-template-columns: 15rem 1fr;
-    justify-items: end;
+    grid-template-columns: repeat(3, 1fr);
   }
   .reviews {
     grid-template-columns: repeat(3, 1fr);
