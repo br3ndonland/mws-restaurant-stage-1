@@ -247,9 +247,9 @@ const submitReview = () => {
     const name = document.getElementById('reviewName').value
     const rating = document.getElementById('reviewRating').value
     const comment = document.getElementById('reviewComment').value
-    console.log('reviewName: ', name)
+    console.log(`A review is being submitted by ${name} from the submitReview function in restaurant.js`)
     DBHelper.saveReview(self.restaurant.id, name, rating, comment, () => {
-      window.location.href = '/restaurant.html?id=' + self.restaurant.id
+      window.location.href = `/restaurant.html?id=${self.restaurant.id - 1}`
     })
   } catch (e) {
     throw Error(e)

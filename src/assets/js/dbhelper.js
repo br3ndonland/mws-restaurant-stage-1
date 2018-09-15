@@ -2,18 +2,23 @@
 
 class DBHelper {
   // JSON data location
-  static get DATABASE_URL () {
+  static get DATABASE_HOST () {
     const port = 1337
-    return `http://localhost:${port}/restaurants`
+    return `http://localhost:${port}`
+  }
+  static get DATABASE_URL () {
+    return `${DBHelper.DATABASE_HOST}/restaurants`
   }
   static get DATABASE_URL_REVIEWS () {
-    const port = 1337
-    return `http://localhost:${port}/reviews`
+    return `${DBHelper.DATABASE_HOST}/reviews`
+  }
+  static get WEB_HOST () {
+    return `http://localhost:8000`
   }
   // Static method to return URL for restaurant page
   static urlForRestaurant (restaurant) {
     const correctedId = restaurant.id - 1
-    return (`./restaurant.html?id=${correctedId}`)
+    return (`${DBHelper.WEB_HOST}/restaurant.html?id=${correctedId}`)
   }
   // Static method to return URL for restaurant image
   static imageUrlForRestaurant (restaurant) {
@@ -29,6 +34,9 @@ class DBHelper {
         const db = await idb.open('udacity-google-mws-idb', 1, upgradeDb => {
           upgradeDb.createObjectStore('restaurants', {autoIncrement: true})
           upgradeDb.createObjectStore('reviews', {autoIncrement: true})
+          // upgradeDb.createObjectStore('pending', {autoIncrement: true})
+          // upgradeDb.createObjectStore('favorites-offline', {autoIncrement: true})
+          // upgradeDb.createObjectStore('reviews-offline', {autoIncrement: true})
         })
         // Store restaurant JSON in IndexedDB
         const restaurantsQuery = fetch(DBHelper.DATABASE_URL)
@@ -184,7 +192,7 @@ class DBHelper {
 
   // Static method to create map marker for restaurant
   // https://leafletjs.com/reference-1.3.0.html#marker
-  static mapMarkerForRestaurant (restaurant, map) {
+  static mapMarker (restaurant, map) {
     const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng],
       {title: restaurant.name,
         alt: restaurant.name,
