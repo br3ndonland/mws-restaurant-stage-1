@@ -27,11 +27,11 @@ Thanks for your review!
 
 ### Reviewer comments 1
 
-Congratulations! You've completed all the requirements of the project. :sunflower:
-
-I left some comments to improve your code, please take a look at my `CODE COMMENT`.
-
-Good luck and happy coding.
+> Congratulations! You've completed all the requirements of the project. :sunflower:
+>
+> I left some comments to improve your code, please take a look at my `CODE COMMENT`.
+>
+> Good luck and happy coding.
 
 Phuc Tran from Udacity.
 

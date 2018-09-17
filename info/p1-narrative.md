@@ -24,6 +24,7 @@ Brendon Smith
 - [Offline availability](#offline-availability)
   - [dbhelper](#dbhelper)
   - [Service Worker](#service-worker)
+- [Review](#review)
 
 ## Getting started
 
@@ -52,7 +53,7 @@ Brendon Smith
   - I modified some of the colors and text effects to match the header to the mockup, and style the header and footer consistently.
   - Here's how it's looking now:
 
-    ![Screen shot after adjusting HTML and CSS](img/Screen-shot-2018-07-06-at-21.18.15.png)
+    ![Screen shot after adjusting HTML and CSS](img/udacity-google-mws-p1-20180706-01.png)
 
 - Git commit at this point: Style homepage header and footer 83fe5d7
 
@@ -87,7 +88,7 @@ Brendon Smith
 
 - This results in a nice grid for the restaurants:
 
-  ![Screen shot of restaurant list with CSS grid](img/Screen-shot-2018-07-06-at-22.57.25.png)
+  ![Screen shot of restaurant list with CSS grid](img/udacity-google-mws-p1-20180706-02.png)
 
 - Git commit: Add CSS Grid for homepage restaurants bd154fd
 - Next, I made the restaurant grid responsive.
@@ -96,7 +97,7 @@ Brendon Smith
   - Organize CSS, img, and JS in /assets
   - I considered formatting the entire page as a grid, with the restaurant list as a nested grid. I decided I didn't need to at this time, because the page is looking responsive.
 
-  ![Screen shot of restaurant page with responsive CSS Grid](img/Screen-shot-2018-07-13-at-16.44.40-iPhone-6S.png)
+  ![Screen shot of restaurant page with responsive CSS Grid](img/udacity-google-mws-p1-20180713-01.png)
 
 - Git commit: Responsively reflow restaurant grid
 
@@ -110,13 +111,13 @@ Brendon Smith
   - Info: I created a grid to display the restaurant info and image inline. I used `justify-items: end;` to spread each part of the grid out to the sides.
   - Reviews: I changed the review body to blockquote, and styled with italic.
 - Responsive grids: It was difficult to get the info and reviews grids to reflow responsively. It wasn't as simple as using `auto-fill` and `minmax()` like I did on the homepage. Instead, I set the columns to `1fr` by default, and wrote a media query to scale on larger displays. I based the breakpoint on the [Bootstrap medium responsive breakpoint](https://getbootstrap.com/docs/4.1/layout/overview/#responsive-breakpoints).
-- Screenshot of responsive restaurant details page (full page screenshots captured in Firefox Developer Edition, and assembled in Figma)
+- Screenshot of responsive restaurant details page (full page screenshots captured in Firefox Developer Edition, and assembled in [Figma](https://www.figma.com/))
 
-  ![Screenshot of responsive restaurant details page](img/udacity-google-mws-restaurant-20180714.png)
+  ![Screenshot of responsive restaurant details page](img/udacity-google-mws-p1-20180714-01.png)
 
 - The homepage is also looking great now.
 
-  ![Screenshot of restaurant reviews app homepage on desktop](img/udacity-google-mws-home-20180716.jpg)
+  ![Screenshot of restaurant reviews app homepage on desktop](img/udacity-google-mws-p1-20180716-01.jpg)
 
 - I modified the JavaScript files to create divs instead of uls, and to add class names and alt text.
 
@@ -244,5 +245,9 @@ Brendon Smith
 - Offline testing was easiest in Chrome. On the application tab in dev tools, I clicked "Service Workers" and then checked "Offline." I was able to successfully cache the static assets.
 - Everything showed up offline except map tiles. If I hadn't navigated to every restaurant page before going offline, and then navigated directly to a restaurant page while offline, like [http://localhost:8000/restaurant.html?id=8](http://localhost:8000/restaurant.html?id=8), I wouldn't have the map tile. I therefore need to cache all the map tiles on first page load.
 - To cache map tiles for every restaurant, I added the specific restaurant page IDs to the `filesToCache` array, like `'/restaurant.html?id=1'`. When I navigated to the homepage, went offline, and then navigated to a specific restaurant page, I still got the map tiles. DONE!
+
+## Review
+
+See [p1-review.md](p1-review.md).
 
 [(Back to top)](#top)

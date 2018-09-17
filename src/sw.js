@@ -1,6 +1,5 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~ Service Worker for restaurant reviews app ~~~~~~~~~~~~~~~~~~~~~~~~~ //
 /* eslint-env serviceworker */
-
 // Set up cache ID variable
 const cacheID = 'udacity-google-mws-v1'
 

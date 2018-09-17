@@ -121,6 +121,7 @@ nav {
   font-weight: 300;
   letter-spacing: 0.1rem;
   text-transform: uppercase;
+  margin: 0.5rem 0 0 0;
 }
 .header--star {
   border: 0.1rem solid var(--dark);
@@ -160,7 +161,6 @@ nav {
   vertical-align: top;
 }
 .reviews {
-  margin: 0.5rem 0;
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 0.2rem;

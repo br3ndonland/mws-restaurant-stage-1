@@ -20,6 +20,8 @@ Brendon Smith
   - [Use IndexedDB to cache JSON responses](#use-indexeddb-to-cache-json-responses)
 - [Performance](#performance)
   - [Lighthouse](#lighthouse)
+- [Review](#review)
+- [Appendix](#appendix)
   - [Building and bundling](#building-and-bundling)
 
 ## Getting started
@@ -144,7 +146,7 @@ Brendon Smith
 
     **Alright!**
 
-    ![Successful IDB setup in Chrome developer tools](img/udacity-google-mws-20180906-idb-setup.png)
+    ![Successful IDB setup in Chrome developer tools](img/udacity-google-mws-p2-20180906-idb-setup.png)
 
   - Next, `fetchRestaurants()` needs to be updated to fetch from IDB if present.
     - I started by writing a test to show the contents of IDB:
@@ -225,6 +227,12 @@ Brendon Smith
 #### Resources
 
 - Doug Brown [Project 2 walkthrough](https://www.youtube.com/watch?v=Q2CJYf_XA58) starting at 0.28.45.
+
+## Review
+
+See [p2-review.md](p2-review.md).
+
+## Appendix
 
 ### Building and bundling
 

@@ -18,12 +18,11 @@ Brendon Smith
 - [Favorites](#favorites)
   - [Favorite button](#favorite-button)
   - [Favorite toggle](#favorite-toggle)
+  - [Favorite submission](#favorite-submission)
 - [Reviews](#reviews)
   - [Fetch reviews from updated server API](#fetch-reviews-from-updated-server-api)
   - [Fetch reviews from IndexedDB](#fetch-reviews-from-indexeddb)
   - [User interface for adding reviews](#user-interface-for-adding-reviews)
-- [`POST` requests](#post-requests)
-  - [Favorite submission](#favorite-submission)
   - [Review submission](#review-submission)
 - [Performance](#performance)
 
@@ -72,12 +71,80 @@ Brendon Smith
     }
     ```
 
+### Favorite submission
+
+#### Updating IndexedDB with new favorite status after toggle
+
+- I started by continuing the [Doug Brown project 3 walkthrough](https://www.youtube.com/watch?v=a7i0U1aCBok) starting at 0.23.30. His code was very difficult to follow, and I wasn't able to implement it successfully.
+- I came up with my own simpler, human-readable solution instead.
+- When creating HTML in `index.createRestaurantHTML()` and `restaurant.fillRestaurantHTML()`:
+  - I show either an unfilled or filled star based on the current favorite state.
+  - I give each favorite button the restaurant's id with
+
+    ```js
+    favoriteButton.id = `restaurant-${restaurant.id}`
+    ```
+
+  - A click listener on each page runs `DBHelper.toggleFavorite(restaurant)` when the star is clicked.
+- Next, I worked on the `DBHelper.toggleFavorite(restaurant)` function. This was the challenging part.
+  - I started by grabbing the appropriate element with `document.getElementById(`restaurant-${restaurant.id}`)`.
+  - Next, I had to read the info from IDB. I was having two issues, shown in the image below:
+    ![Problems with overwriting and duplicating IndexedDB object stores](img/udacity-google-mws-p3-20180916-01.png)
+      1. *Overwriting the JSON array in IndexedDB:* At first, I was reading the database with `store.getAll()`. The problem with this was that submitting a change in favorite status (like "true" or "false") was just overwriting the entire JSON object store. Rather than calling `store.getAll()`, I had to call `store.openCursor(0[restaurant.id])` to iterate through the JSON and read the object for this specific restaurant. There's just one JSON array for all the restaurants, so I use `0`, and I want to change the favorite status for this specific restaurant, so I use `restaurant.id` to find its object in the JSON array. Also note my use of Async/Await to read the data returned from IndexedDB.
+      2. *Duplicating the JSON array in IndexedDB:* The second problem you can see in the image above is that I was duplicating the JSON array every time I loaded the page. I had to change the object store key path in `DBHelper.createDatabase()` from `{autoincrement: true}` to `{keyPath: 'id'}`. This was throwing some errors at first. Each time I open the object store, I have to reference the specific key path. I only have one JSON array, and keys start at 1. Each time I act on the object store, I need to add the `keyPath`, like `await restaurantsStore.put(restaurants, 1)`.
+  - IndexedDB is now updated properly:
+    ![Corrected problems with overwriting and duplicating IndexedDB object stores](img/udacity-google-mws-p3-20180916-02.png)
+  - I also included an `else {}` condition to attempt to send changes directly to server API if IndexedDB is not present, basically functioning like a normal online web app in that case.
+- Here's the `DBHelper.toggleFavorite(restaurant)` function at this point for reference:
+
+  ```js
+  // Static method to toggle favorite status of a restaurant by clicking the star button
+  static async toggleFavorite (restaurant) {
+    try {
+      const favoriteButton = document.getElementById(`restaurant-${restaurant.id}`)
+      // Look for IndexedDB and open JSON object with cursor
+      const db = await idb.open('udacity-google-mws-idb', 1)
+      const tx = db.transaction('restaurants', 'readwrite')
+      const store = tx.objectStore('restaurants')
+      const data = await store.openCursor(0[restaurant.id])
+      if (data.length > 0) {
+        // If IndexedDB is present, send data there
+        restaurant.is_favorite = data.is_favorite === 'true' ? 'false' : 'true'
+        console.log(`New favorite status for ${restaurant.name} ID ${restaurant.id} to send to IndexedDB: ${restaurant.is_favorite}`)
+        await store.put(restaurant.is_favorite, 1)
+        // TODO: POST to IDB restaurants-offline object store
+      } else {
+        // If IndexedDB is not present, attempt to send changes directly to server API
+        const query = fetch(`${DBHelper.DATABASE_URL}/${restaurant.id}/?${restaurant.is_favorite === 'true' ? 'is_favorite=false' : 'is_favorite=true'}`, {method: 'PUT'})
+        const response = await (await query).json()
+        restaurant.is_favorite = response.is_favorite
+        console.log(`New favorite status for ${restaurant.name} ID ${restaurant.id} to send to server: ${restaurant.is_favorite}`)
+      }
+      // Change icon
+      if (restaurant.is_favorite === 'true') {
+        favoriteButton.innerHTML = '&#9733'
+        favoriteButton.setAttribute('aria-label', `Remove ${restaurant.name} from favorites`)
+      } else {
+        favoriteButton.innerHTML = '&#9734'
+        favoriteButton.setAttribute('aria-label', `Add ${restaurant.name} to favorites`)
+      }
+    } catch (e) {
+      throw Error(e)
+    }
+  }
+  ```
+
+#### Syncing offline favorites with server
+
+- There are a couple of things I need to sync here. First, when I toggle a favorite on the homepage, it does change, but if I then navigate to the restaurant page, the favorite doesn't show up. I have to refresh the page to show the update. This may be a Service Worker issue.
+- Next, I need to create a queue for changes made when offline, and propagate the queue to the server when connectivity is re-established.
+- *TODO*
+
 ## Reviews
 
 ### Fetch reviews from updated server API
 
-- This is where it gets complicated. I wasn't able to continue following Doug Brown's walkthrough very well without reviews functions, so I decided to proceed by fetching the reviews next. I will handle the favorite and review submission later.
-- I refactored some of *restaurant.html* to look closer to *index.html* by moving more of the HTML generation to *restaurant.js*. I updated the CSS accordingly.
+- When I revisited *restaurant.html*, I refactored some of *restaurant.html* to look closer to *index.html* by moving more of the HTML generation to *restaurant.js*. I updated the CSS accordingly.
 - In project 2, the reviews were appended to the restaurant JSON. In project 3, the reviews are in a separate JSON API.
   - I set up a reviews variable in *dbhelper.js*:
 
@@ -90,7 +157,7 @@ Brendon Smith
 
   - I updated `DBHelper.createDatabase()` to fetch the reviews and put them into a separate IDB store. I'm not using the new IDB store yet, but I will get to it.
 - Next, when rendering the restaurant info page *restaurant.html*, I needed to fetch reviews specific to that restaurant.
-  - It was confusing and frustrating to figure this out. I had to spend several hours hacking and console logging, trying to follow all the functions and callbacks. The way Udacity wrote the code is non-linear and difficult to read. I considered refactoring the entire codebase, but decided it wouldn't be worth the effort at this point. I eventually had some success.
+  - It was confusing and frustrating to figure this out. I had to spend several hours hacking and console logging, trying to sort through the Udacity [callback hell](https://www.quora.com/What-is-callback-hell).  The way Udacity wrote the code is non-linear and difficult to read. I considered refactoring the entire codebase, but decided it wouldn't be worth the effort at this point. I eventually had some success.
   - I started at `restaurant.fetchRestaurantFromURL()`, which calls `DBHelper.fetchRestaurantById()`, which calls `DBHelper.fetchRestaurants()`.
   - Within the call to `DBHelper.fetchRestaurants()` I added `self.restaurant.reviews = restaurant.reviews`, which will read reviews returned from the function and plug into the rest of the previously written code in *restaurant.js*.
   - This means I need to pull review data into the `DBHelper.fetchRestaurants()` function. I decided to just work with the online data API itself right now, because trying to add in IDB calls at the same time would be too complicated. As a side benefit, I was finally able to delete the line with `==`. StandardJS prefers `===` over `==`, but when I tried to add `===` previously it was breaking the function. I was simply able to slice the array by `id`.
@@ -135,7 +202,7 @@ Brendon Smith
   - This was much easier and only took me a few minutes.
   - I considered making a separate `fetchReviews()` function, or adding the reviews fetch to `fetchRestaurants()`, but the callbacks make it too difficult.
   - I ended up just nesting the reviews fetch under `fetchRestaurantById()`.
-  - The function looked like this:
+  - The function in *dbhelper.js* looked like this:
 
     ```js
     // dbhelper.js
@@ -183,13 +250,12 @@ Brendon Smith
   addReview.addEventListener('click', () => overlayDiv.classList.toggle('d-none'))
   ```
 
-## `POST` requests
-
-### Favorite submission
-
-- See the [Doug Brown project 3 walkthrough](https://www.youtube.com/watch?v=a7i0U1aCBok) 0.23.30
-
 ### Review submission
+
+- To get started, I reviewed the [MDN sending form data](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Sending_and_retrieving_form_data) page.
+- The review submission process starts on the restaurant page and in *restaurant.js*. The `saveReview()` function collects metadata for the `POST` request, but does not yet submit the `POST` request, and then triggers the `DBHelper.saveReview()` function.
+- After submitting the form, the page was reloading to `http://localhost:8000/restaurant.html?`.
+  - Problem with *restaurant.js* `fetchRestaurantFromURL()`.
 
 ## Performance
 

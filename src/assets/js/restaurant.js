@@ -1,15 +1,5 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JavaScript for restaurant pages ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-// Register service worker
-if ('serviceWorker' in navigator) {
-  console.log(`Registering Service Worker.`)
-  navigator.serviceWorker.register('/sw.js').then(reg => {
-    console.log(`Service Worker registration successful for ${reg.scope}`)
-  }).catch(e => {
-    console.log(`Registration failed with error ${e}`)
-  })
-}
-
 // Add restaurant name to breadcrumb navigation menu
 const fillBreadcrumb = (restaurant = self.restaurant) => {
   try {
@@ -91,7 +81,7 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
     title.textContent = 'Reviews'
     const addReview = document.createElement('a')
     addReview.className = 'header--link'
-    addReview.textContent = 'Add/edit'
+    addReview.textContent = 'Add'
     reviewsHeader.appendChild(title)
     reviewsHeader.appendChild(addReview)
     // Add reviews

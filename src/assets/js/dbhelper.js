@@ -32,24 +32,24 @@ class DBHelper {
         console.log('IndexedDB available.')
         // Create IndexedDB
         const db = await idb.open('udacity-google-mws-idb', 1, upgradeDb => {
-          upgradeDb.createObjectStore('restaurants', {autoIncrement: true})
-          upgradeDb.createObjectStore('reviews', {autoIncrement: true})
+          upgradeDb.createObjectStore('restaurants', {keypath: 'id'})
+          upgradeDb.createObjectStore('restaurants-offline', {keypath: 'id'})
+          upgradeDb.createObjectStore('reviews', {keypath: 'id'})
+          upgradeDb.createObjectStore('reviews-offline', {keypath: 'id'})
           // upgradeDb.createObjectStore('pending', {autoIncrement: true})
-          // upgradeDb.createObjectStore('favorites-offline', {autoIncrement: true})
-          // upgradeDb.createObjectStore('reviews-offline', {autoIncrement: true})
         })
         // Store restaurant JSON in IndexedDB
         const restaurantsQuery = fetch(DBHelper.DATABASE_URL)
         const restaurants = await (await restaurantsQuery).json()
         const restaurantsTx = db.transaction('restaurants', 'readwrite')
         const restaurantsStore = restaurantsTx.objectStore('restaurants')
-        await restaurantsStore.put(restaurants)
+        await restaurantsStore.put(restaurants, 1)
         // Store reviews JSON in IndexedDB
         const reviewsQuery = fetch(DBHelper.DATABASE_URL_REVIEWS)
         const reviews = await (await reviewsQuery).json()
         const reviewsTx = db.transaction('reviews', 'readwrite')
         const reviewsStore = reviewsTx.objectStore('reviews')
-        await reviewsStore.put(reviews)
+        await reviewsStore.put(reviews, 1)
         console.log('IndexedDB creation successful.')
       } else {
         console.log('IndexedDB not available.')
@@ -99,11 +99,11 @@ class DBHelper {
           const reviews = response.filter(review => review.restaurant_id === restaurant.id)
           restaurant.reviews = reviews
         } else {
-        const query = fetch(DBHelper.DATABASE_URL_REVIEWS)
+          const query = fetch(DBHelper.DATABASE_URL_REVIEWS)
           let response = await (await query).json()
           console.log('Reading reviews from server API.')
-        const reviews = response.filter(review => review.restaurant_id === restaurant.id)
-        restaurant.reviews = reviews
+          const reviews = response.filter(review => review.restaurant_id === restaurant.id)
+          restaurant.reviews = reviews
         }
         if (restaurant) {
           callback(null, restaurant)
@@ -205,11 +205,26 @@ class DBHelper {
   // Static method to toggle favorite status of a restaurant by clicking the star button
   static async toggleFavorite (restaurant) {
     try {
-      // TODO: Enable offline toggle capability, use format for database creation above
-      const query = fetch(`${DBHelper.DATABASE_URL}/${restaurant.id}/?${restaurant.is_favorite === 'true' ? 'is_favorite=false' : 'is_favorite=true'}`, {method: 'PUT'})
-      const response = await (await query).json()
-      restaurant.is_favorite = response.is_favorite
       const favoriteButton = document.getElementById(`restaurant-${restaurant.id}`)
+      // Look for IndexedDB and open JSON object with cursor
+      const db = await idb.open('udacity-google-mws-idb', 1)
+      const tx = db.transaction('restaurants', 'readwrite')
+      const store = tx.objectStore('restaurants')
+      const data = await store.openCursor(0[restaurant.id])
+      if (data.length > 0) {
+        // If IndexedDB is present, send data there
+        restaurant.is_favorite = data.is_favorite === 'true' ? 'false' : 'true'
+        console.log(`New favorite status for ${restaurant.name} ID ${restaurant.id} to send to IndexedDB: ${restaurant.is_favorite}`)
+        await store.put(restaurant.is_favorite, 1)
+        // TODO: POST to IDB restaurants-offline object store
+      } else {
+        // If IndexedDB is not present, attempt to send changes directly to server API
+        const query = fetch(`${DBHelper.DATABASE_URL}/${restaurant.id}/?${restaurant.is_favorite === 'true' ? 'is_favorite=false' : 'is_favorite=true'}`, {method: 'PUT'})
+        const response = await (await query).json()
+        restaurant.is_favorite = response.is_favorite
+        console.log(`New favorite status for ${restaurant.name} ID ${restaurant.id} to send to server: ${restaurant.is_favorite}`)
+      }
+      // Change icon
       if (restaurant.is_favorite === 'true') {
         favoriteButton.innerHTML = '&#9733'
         favoriteButton.setAttribute('aria-label', `Remove ${restaurant.name} from favorites`)
@@ -217,9 +232,15 @@ class DBHelper {
         favoriteButton.innerHTML = '&#9734'
         favoriteButton.setAttribute('aria-label', `Add ${restaurant.name} to favorites`)
       }
-      console.log(`Favorite status for ${restaurant.name}: ${restaurant.is_favorite}`)
     } catch (e) {
       throw Error(e)
     }
   }
+  // TODO: POST a review to the database
+  static async postReview (review) {}
+  // TODO: Sync offline and online favorites and reviews
+  static async syncData () {}
+  // Send to online
+  // Compare online and offline
+  // If same, then delete
 }
