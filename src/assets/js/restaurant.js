@@ -164,21 +164,7 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
 // Get current restaurant from page URL
 const fetchRestaurantFromURL = (callback) => {
   try {
-    if (self.restaurant) { // restaurant already fetched
-      callback(null, self.restaurant)
-      return
-    }
-    // Get a parameter by name from page URL
-    const getParameterByName = (name, url) => {
-      if (!url) { url = window.location.href }
-      name = name.replace(/[[\]]/g, '\\$&')
-      const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`)
-      const results = regex.exec(url)
-      if (!results) { return null }
-      if (!results[2]) { return '' }
-      return decodeURIComponent(results[2].replace(/\+/g, ' '))
-    }
-    const id = getParameterByName('id')
+    const id = window.location.href.replace(/.*=/g, '')
     if (!id) { // no id found in URL
       const error = 'No restaurant id in URL'
       callback(null, error)
@@ -239,7 +225,7 @@ const submitReview = () => {
     const comment = document.getElementById('reviewComment').value
     console.log(`A review is being submitted by ${name} from the submitReview function in restaurant.js`)
     DBHelper.saveReview(self.restaurant.id, name, rating, comment, () => {
-      window.location.href = `/restaurant.html?id=${self.restaurant.id - 1}`
+      window.location.href = `/restaurant.html?id=${self.restaurant.id}`
     })
   } catch (e) {
     throw Error(e)
