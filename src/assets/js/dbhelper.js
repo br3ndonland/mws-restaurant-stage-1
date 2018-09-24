@@ -32,9 +32,6 @@ class DBHelper {
         const db = await idb.open('udacity-google-mws-idb', 1, upgradeDb => {
           upgradeDb.createObjectStore('restaurants', {keypath: 'id'})
           upgradeDb.createObjectStore('reviews', {autoincrement: true})
-          // upgradeDb.createObjectStore('restaurants-offline', {keypath: 'id'})
-          // upgradeDb.createObjectStore('reviews-offline', {keypath: 'id'})
-          // upgradeDb.createObjectStore('pending', {autoIncrement: true})
         })
         // Store restaurant JSON in IndexedDB
         const restaurantsQuery = fetch(DBHelper.DATABASE_URL)
@@ -232,6 +229,8 @@ class DBHelper {
         favoriteButton.innerHTML = '&#9734'
         favoriteButton.setAttribute('aria-label', `Add ${restaurant.name} to favorites`)
       }
+      // Sync with server
+      DBHelper.syncFavorites()
     } catch (e) {
       throw Error(e)
     }
@@ -269,16 +268,39 @@ class DBHelper {
         fetch(url, params)
       }
       window.location.href = `/restaurant.html?id=${self.restaurant.id}`
+      // Sync with server
+      DBHelper.syncFavorites()
     } catch (e) {
       throw Error(e)
     }
   }
 
-  // TODO: Sync offline and online favorites and reviews
-  static async syncData () {
-    // Ping server to check for connection
-    // Send to online
-    // Compare online and offline
-    // If same, then delete
+  static async syncFavorites () {
+    try {
+      // Ping server to check for connection
+      const ping = fetch(DBHelper.DATABASE_URL)
+      const pong = await (await ping)
+      if (pong.ok === true) {
+        // Fetch data from server
+        const serverRestaurants = await (await ping).json()
+        console.log(serverRestaurants)
+        // Fetch data from IndexedDB
+        const db = await idb.open('udacity-google-mws-idb', 1)
+        const tx = db.transaction('restaurants', 'readonly')
+        const store = tx.objectStore('restaurants')
+        const restaurants = await store.getAll()
+        console.log(restaurants)
+        // Compare data for each restaurant. If favorite status is different, PUT to server API.
+        restaurants.forEach((restaurant, i) => {
+          const serverRestaurant = serverRestaurants[i]
+          if (restaurant.is_favorite !== serverRestaurant.is_favorite) {
+            fetch(`${DBHelper.DATABASE_URL}/${restaurant.id}/?is_favorite=${restaurant.is_favorite}`, {method: 'PUT'})
+            console.log(`PUT change for restaurant ${restaurant.name}`)
+          }
+        })
+      }
+    } catch (e) {
+      throw Error(e)
+    }
   }
 }

@@ -22,7 +22,12 @@ Brendon Smith
   - [Fetch reviews from updated server API](#fetch-reviews-from-updated-server-api)
   - [Fetch reviews from IndexedDB](#fetch-reviews-from-indexeddb)
   - [User interface for adding reviews](#user-interface-for-adding-reviews)
-  - [Review submission](#review-submission)
+  - [POST reviews](#post-reviews)
+- [Syncing offline and online data](#syncing-offline-and-online-data)
+  - [Check for network connection](#check-for-network-connection)
+  - [Sync favorites](#sync-favorites)
+- [Other changes](#other-changes)
+  - [Caching map tiles](#caching-map-tiles)
 - [Performance](#performance)
 - [Reflections](#reflections)
 
@@ -269,7 +274,7 @@ Brendon Smith
 
 </details>
 
-#### IndexedDB confusion resolution
+##### IndexedDB confusion resolution
 
 - **Database architecture:** I had to spend some time reading about IndexedDB and re-thinking my data model.
   - I created an **object store** for the restaurant data, and another for the reviews.
@@ -325,7 +330,7 @@ Brendon Smith
   - Cursors store data in `cursor.value`.
   - Next, I need to update `cursor.value.is_favorite`.
     - This step was difficult for me. I kept overwriting the entire database entry (the entire JSON object for the restaurant), instead of just changing the `is_favorite` attribute.
-    - After several days of frustration, I realized that the syntax I was using was causing the problem. I was toggling favorite status with the [ternary conditional operator syntax](https://en.wikipedia.org/wiki/%3F:) `?:` from the [Doug Brown project 3 walkthrough](https://www.youtube.com/watch?v=a7i0U1aCBok). This syntax requires creation of a new object, like `const newStatus = cursor.value.is_favorite === 'true' ? 'false' : 'true'`, bu then updating the cursor with the new object `newStatus` just overwrites the entire cursor with `"true"`. Simply writing `cursor.value.is_favorite === 'true' ? 'false' : 'true'` throws an error. I tried modifying the `cursor.update()` command to be more specific, but it didn't work. I also tried including all the data in the `newStatus` object, but wasn't having success.
+    - After several days of frustration, I realized that the syntax I was using was causing the problem. I was toggling favorite status with the [ternary conditional operator syntax](https://en.wikipedia.org/wiki/%3F:) `?:` from the [Doug Brown project 3 walkthrough](https://www.youtube.com/watch?v=a7i0U1aCBok). This syntax requires creation of a new object, like `const newStatus = cursor.value.is_favorite === 'true' ? 'false' : 'true'`, but then updating the cursor with the new object `newStatus` just overwrites the entire cursor with `"true"`. Simply writing `cursor.value.is_favorite === 'true' ? 'false' : 'true'` throws an error. I tried modifying the `cursor.update()` command to be more specific, but it didn't work. I also tried including all the data in the `newStatus` object, but wasn't having success.
     - Success came when I got rid of the ternary conditional operator and used a traditional if/else statement instead. This allowed me to work directly with `cursor.value`, and update  `cursor.value.is_favorite` specifically.
   - Here's the updated `DBHelper.toggleFavorite()` static method at this point:
 
@@ -370,19 +375,6 @@ Brendon Smith
     ```
 
 **What a ridiculous amount of work just to edit JSON.** IndexedDB should be more JSON-friendly. Note that the MDN IndexedDB page doesn't even mention JSON, when it is the number one use case for REST endpoints on the web.
-
-#### Caching map tiles
-
-- I also noticed I wasn't properly caching map tiles. This is a very common problem.
-  - Leaflet doesn't provide good ways to cache map tiles or create a static map.
-  - Mapbox does offer a [static map](https://www.mapbox.com/help/static-api-playground/), but if it's added through the leaflet tile option it gets repeated instead of showing a single image. Also note that if you use the `L.tilelayer({errorTileUrl: ''})` option, it will attempt to fetch the markers from there as well.
-- I addressed this issue by also creating static maps. *TODO*
-
-#### Syncing offline favorites with server
-
-- There are a couple of things I need to sync here. First, when I toggle a favorite on the homepage, it does change, but if I then navigate to the restaurant page, the favorite doesn't show up. I have to refresh the page to show the update. This may be a Service Worker issue.
-- Next, I need to create a queue for changes made when offline, and propagate the queue to the server when connectivity is re-established.
-- *TODO*
 
 ## Reviews
 
@@ -494,7 +486,7 @@ Brendon Smith
   addReview.addEventListener('click', () => overlayDiv.classList.toggle('d-none'))
   ```
 
-### Review submission
+### POST reviews
 
 - To get started, I reviewed the [MDN sending form data](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Sending_and_retrieving_form_data) page.
 - The review submission process starts on the restaurant page and in *restaurant.js*. A click handler on the review form triggers the `DBHelper.postReview(restaurant)` static method. Using `restaurant` in the callback passes all the appropriate restaurant info automatically.
@@ -552,14 +544,175 @@ Brendon Smith
           }
           console.log(`URL ${url} being used to submit ${params.body} to server.`)
           fetch(url, params)
-          }
+        }
         window.location.href = `/restaurant.html?id=${self.restaurant.id}`
       } catch (e) {
         throw Error(e)
-        }
+      }
     }
 
+    ```
+
+## Syncing offline and online data
+
+### Check for network connection
+
+- The first step is to check for a network connection.
+- Browsers have a [`Navigator.onLine` attribute](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine/onLine). Note that it detects any network connection, not necessarily the specific server connection we are interested in. This is just the first step.
+- I added an event listener to both *index.html* and *restaurant.html*.
+
+  ```js
+  window.addEventListener('offline', () => alert('Offline.'))
+  window.addEventListener('online', () => {
+    alert('Online.')
+    DBHelper.syncFavorites()
+    DBHelper.syncReviews()
+  })
   ```
+
+- I later removed the alerts to streamline the user experience.
+- The online event listener is not foolproof, so I also attempt `DBHelper.syncData()` when favorites or reviews are submitted to IndexedDB from `DBHelper.toggleFavorite()` or `DBHelper.postReview(restaurant)`. This gives me the greatest chance of properly updating the server after a change in the database.
+
+### Sync favorites
+
+- Next, I need to propagate offline changes to the server. I started with favorites.
+- The first step is to ping the server. The response object contains a Boolean `ok` attribute.
+
+  ```js
+  // DBHelper.syncFavorites()
+  const ping = fetch(DBHelper.DATABASE_URL)
+  const pong = await (await ping)
+  if (pong.ok === true) {
+    // Code to compare data and update server
+    ...
+  }
+  ```
+
+- Many students create an offline queue for changes. Instead, I opted to compare the IndexedDB data with the server data, and overwrite the server data with any changes from IndexedDB.
+- My first thought was to just overwrite the entire dataset on the server. I wrote a function like this:
+  - <details><summary>First draft of <code>DBHelper.syncFavorites()</code></summary>
+
+    ```js
+    // dbhelper.js
+    static async syncFavorites () {
+      try {
+        // Ping server to check for connection
+        const ping = fetch(DBHelper.DATABASE_URL)
+        const pong = await (await ping)
+        if (pong.ok === true) {
+          // Fetch data from server
+          const serverData = await (await ping).json()
+          console.log(serverData)
+          // Fetch data from IndexedDB
+          const db = await idb.open('udacity-google-mws-idb', 1)
+          const tx = db.transaction('restaurants', 'readonly')
+          const store = tx.objectStore('restaurants')
+          const idbData = await store.getAll()
+          console.log(idbData)
+          // Compare online and offline
+          if (serverData.includes(idbData)) {
+            console.log('IndexedDB and server data match.')
+          } else {
+            // Overwrite server data
+            console.log('Overwriting server data.')
+            const url = DBHelper.DATABASE_URL
+            const params = {
+              body: idbData,
+              method: 'PUT'
+            }
+            fetch(url, params)
+          }
+        }
+      } catch (e) {
+        throw Error(e)
+      }
+    }
+    ```
+
+  </summary>
+
+- However, there's no `PUT` endpoint for general restaurant data, just for favorites.
+- I refactored the function to iterate over each restaurant JSON object, compare the `is_favorite` status, and update the server data if there is a difference.
+  - I started by fetching data from the server and from IndexedDB.
+  - I then iterated over the IndexedDB array with `restaurants.forEach(restaurant =>{})`. I could also have iterated over the server data array, I just picked IndexedDB because it allows me to accomplish all the steps in a single database transaction.
+  - For each restaurant, I needed to compare the `is_favorite` status for the restaurant in IndexedDB and on the server. This was a similar challenge to [filtering the location list](https://github.com/br3ndonland/udacity-fsnd-p5-map/blob/master/info/map-methods.md#filter-location-list) for my Udacity Full Stack Web Developer Nanodegree program [neighborhood map project](https://github.com/br3ndonland/udacity-fsnd-p5-map).
+  - I started with a simple console log comparison.
+  - <details><summary>Comparing IndexedDB and server favorites in <code>DBHelper.syncFavorites()</code></summary>
+
+    ```js
+    // DBHelper.syncFavorites()
+    static async syncFavorites () {
+      try {
+        // Ping server to check for connection
+        const ping = fetch(DBHelper.DATABASE_URL)
+        const pong = await (await ping)
+        if (pong.ok === true) {
+          // Fetch data from server
+          const serverRestaurants = await (await ping).json()
+          console.log(serverRestaurants)
+          // Fetch data from IndexedDB
+          const db = await idb.open('udacity-google-mws-idb', 1)
+          const tx = db.transaction('restaurants', 'readonly')
+          const store = tx.objectStore('restaurants')
+          const restaurants = await store.getAll()
+          console.log(restaurants)
+          restaurants.forEach((restaurant, i) => {
+            console.log(`Favorite status for ${restaurant.name} ID ${restaurant.id} is: ${restaurant.is_favorite}`)
+            const serverRestaurant = serverRestaurants[i]
+            console.log(`Favorite status for server ${serverRestaurant.name} ID ${serverRestaurant.id} is: ${serverRestaurant.is_favorite}`)
+          })
+        }
+      } catch (e) {
+        throw Error(e)
+      }
+    }
+    ```
+
+    </details>
+
+  - The final step was to update the server data with `fetch` and `PUT`.
+- Here's the finished static method:
+
+  ```js
+  // DBHelper.syncFavorites()
+  static async syncFavorites () {
+    try {
+      // Ping server to check for connection
+      const ping = fetch(DBHelper.DATABASE_URL)
+      const pong = await (await ping)
+      if (pong.ok === true) {
+        // Fetch data from server
+        const serverRestaurants = await (await ping).json()
+        console.log(serverRestaurants)
+        // Fetch data from IndexedDB
+        const db = await idb.open('udacity-google-mws-idb', 1)
+        const tx = db.transaction('restaurants', 'readonly')
+        const store = tx.objectStore('restaurants')
+        const restaurants = await store.getAll()
+        console.log(restaurants)
+        // Compare data for each restaurant. If favorite status is different, PUT to server API.
+        restaurants.forEach((restaurant, i) => {
+          const serverRestaurant = serverRestaurants[i]
+          if (restaurant.is_favorite !== serverRestaurant.is_favorite) {
+            fetch(`${DBHelper.DATABASE_URL}/${restaurant.id}/?is_favorite=${restaurant.is_favorite}`, {method: 'PUT'})
+            console.log(`PUT change for restaurant ${restaurant.name}`)
+          }
+        })
+      }
+    } catch (e) {
+      throw Error(e)
+    }
+  }
+  ```
+
+## Other changes
+
+### Caching map tiles
+
+- I also noticed I wasn't properly caching map tiles. This is a very common problem.
+  - Leaflet doesn't provide good ways to cache map tiles or create a static map.
+  - Mapbox does offer a [static map](https://www.mapbox.com/help/static-api-playground/), but if it's added through the leaflet tile option it gets repeated instead of showing a single image. Also note that if you use the `L.tilelayer({errorTileUrl: ''})` option, it will attempt to fetch the markers from there as well.
+- I addressed this issue by also creating static maps. *TODO*
 
 ## Performance
 

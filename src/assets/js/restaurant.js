@@ -229,5 +229,7 @@ const initMap = () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   DBHelper.createDatabase()
+  DBHelper.syncFavorites()
   initMap()
 })
+window.addEventListener('online', () => DBHelper.syncFavorites())
