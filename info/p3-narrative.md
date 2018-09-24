@@ -497,35 +497,69 @@ Brendon Smith
 ### Review submission
 
 - To get started, I reviewed the [MDN sending form data](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Sending_and_retrieving_form_data) page.
-- The review submission process starts on the restaurant page and in *restaurant.js*. The `saveReview()` function collects metadata for the `POST` request, but does not yet submit the `POST` request, and then triggers the `DBHelper.saveReview()` function.
-- After submitting the form, the page was reloading to `http://localhost:8000/restaurant.html?`.
-  - Problem with *restaurant.js* `fetchRestaurantFromURL()`.
+- The review submission process starts on the restaurant page and in *restaurant.js*. A click handler on the review form triggers the `DBHelper.postReview(restaurant)` static method. Using `restaurant` in the callback passes all the appropriate restaurant info automatically.
+- The static method has a few steps:
+  - First, it collects info from the form. I noticed that the rating was coming through as a string, so I used the `Number()` constructor to convert from string to integer.
 
-## Performance
-
-My app was already meeting the performance benchmarks during project 2.
-          }
-        }
-      })
+    ```js
+    // Collect info for POST request
+    const name = document.getElementById('reviewName').value
+    const rating = document.getElementById('reviewRating').value
+    const comment = document.getElementById('reviewComment').value
+    console.log(`A review is being submitted by ${name} for restaurant ${restaurant.name} ID ${restaurant.id} from the DBHelper.postReview(restaurant) static method.`)
+    const body = {
+      comments: comment,
+      createdAt: Date.now(),
+      name: name,
+      rating: Number(rating),
+      restaurant_id: restaurant.id
     }
     ```
 
-### User interface for adding reviews
+  - The next step, similar to `DBHelper.toggleFavorite()`, is to check for IndexedDB and post there, or else post directly to the server. The key here was recognizing that each review is saved as a **key** in the database. The key is an integer, and the `reviews` object store is set to auto increment the keys. I get the array of keys with `await store.getAllKeys()`, generate an integer and add one with `Number(keys.length + 1)`, and put the review to the object store, using the integer I generated as the key.
+  - Finally, I had to set the URL. After submitting the form, the page was reloading to `http://localhost:8000/restaurant.html?`. I corrected this with window.location.href = `/restaurant.html?id=${self.restaurant.id}`.
+  - Here's the function at this point:
 
-- I created an overlay for adding reviews.
-- I added `<form class="overlay d-none" id="overlay-div"></form>` to *restaurant.html* as a placeholder, and programmatically created the HTML from within *restaurant.js*.
-- I show and hide the overlay by using a function to toggle `d-none` when the `addReview` link in the header is clicked:
+    ```js
+    // dbhelper.js
+    static async postReview (restaurant) {
+      try {
+        // Collect info for POST request
+        const name = document.getElementById('reviewName').value
+        const rating = document.getElementById('reviewRating').value
+        const comment = document.getElementById('reviewComment').value
+        const body = {
+          comments: comment,
+          createdAt: Date.now(),
+          name: name,
+          rating: Number(rating),
+          restaurant_id: restaurant.id
+        }
+        if ('indexedDB' in window) {
+          // POST changes to IndexedDB
+          const db = await idb.open('udacity-google-mws-idb', 1)
+          const tx = db.transaction('reviews', 'readwrite')
+          const store = tx.objectStore('reviews')
+          const keys = await store.getAllKeys()
+          const key = Number(keys.length + 1)
+          await store.put(body, key)
+        } else {
+          // If IndexedDB is not present, attempt to POST changes directly to server API
+          const url = DBHelper.DATABASE_URL_REVIEWS
+          const params = {
+            body: body,
+            method: 'POST'
+          }
+          console.log(`URL ${url} being used to submit ${params.body} to server.`)
+          fetch(url, params)
+          }
+        window.location.href = `/restaurant.html?id=${self.restaurant.id}`
+      } catch (e) {
+        throw Error(e)
+        }
+    }
 
-  ```js
-  addReview.addEventListener('click', () => overlayDiv.classList.toggle('d-none'))
   ```
-
-### Review submission
-
-- To get started, I reviewed the [MDN sending form data](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Sending_and_retrieving_form_data) page.
-- The review submission process starts on the restaurant page and in *restaurant.js*. The `saveReview()` function collects metadata for the `POST` request, but does not yet submit the `POST` request, and then triggers the `DBHelper.saveReview()` function.
-- After submitting the form, the page was reloading to `http://localhost:8000/restaurant.html?`.
-  - Problem with *restaurant.js* `fetchRestaurantFromURL()`.
 
 ## Performance
 

@@ -29,7 +29,7 @@ Brendon Smith
 
 This is a Progressive Web Application (PWA) (see [Google](https://developers.google.com/web/progressive-web-apps/) and [Mozilla](https://developer.mozilla.org/en-US/docs/Web/Apps/Progressive)) that displays a list of restaurants and associated information. I completed this project for my [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024).
 
-![Screenshot of restaurant reviews app homepage on desktop](info/img/udacity-google-mws-home-20180716.jpg)
+![Screenshot of restaurant reviews app homepage on desktop](info/img/udacity-google-mws-p1-20180716-01.jpg)
 
 I was awarded a scholarship to this Nanodegree program after completing the [Udacity Grow with Google](https://www.udacity.com/grow-with-google) Scholarship challenge course, in the Intermediate Web Developer track. Materials from the challenge course are available in my [udacity-google repo](https://github.com/br3ndonland/udacity-google).
 
@@ -172,10 +172,13 @@ We use a different Node server to deliver the data API.
 
     ```json
     {
-      "restaurant_id": <restaurant_id>,
+      "comments": <comment_text>,
+      "createdAt": <1504095567183>,
+      "id": <id>,
       "name": <reviewer_name>,
       "rating": <rating>,
-      "comments": <comment_text>
+      "restaurant_id": <restaurant_id>,
+      "updatedAt": <1504095567183>
     }
     ```
 

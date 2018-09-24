@@ -31,7 +31,7 @@ class DBHelper {
         // Create IndexedDB
         const db = await idb.open('udacity-google-mws-idb', 1, upgradeDb => {
           upgradeDb.createObjectStore('restaurants', {keypath: 'id'})
-          upgradeDb.createObjectStore('reviews', {keypath: 'id'})
+          upgradeDb.createObjectStore('reviews', {autoincrement: true})
           // upgradeDb.createObjectStore('restaurants-offline', {keypath: 'id'})
           // upgradeDb.createObjectStore('reviews-offline', {keypath: 'id'})
           // upgradeDb.createObjectStore('pending', {autoIncrement: true})
@@ -236,8 +236,43 @@ class DBHelper {
       throw Error(e)
     }
   }
-  // TODO: POST a review to the database
-  static async postReview (review) {}
+
+  // Static method to POST a review
+  static async postReview (restaurant) {
+    try {
+      // Collect info for POST request
+      const name = document.getElementById('reviewName').value
+      const rating = document.getElementById('reviewRating').value
+      const comment = document.getElementById('reviewComment').value
+      const body = {
+        comments: comment,
+        createdAt: Date.now(),
+        name: name,
+        rating: Number(rating),
+        restaurant_id: restaurant.id
+      }
+      if ('indexedDB' in window) {
+        // POST changes to IndexedDB
+        const db = await idb.open('udacity-google-mws-idb', 1)
+        const tx = db.transaction('reviews', 'readwrite')
+        const store = tx.objectStore('reviews')
+        const keys = await store.getAllKeys()
+        const key = Number(keys.length + 1)
+        await store.put(body, key)
+      } else {
+        // If IndexedDB is not present, attempt to POST changes directly to server API
+        const url = DBHelper.DATABASE_URL_REVIEWS
+        const params = {
+          body: body,
+          method: 'POST'
+        }
+        fetch(url, params)
+      }
+      window.location.href = `/restaurant.html?id=${self.restaurant.id}`
+    } catch (e) {
+      throw Error(e)
+    }
+  }
 
   // TODO: Sync offline and online favorites and reviews
   static async syncData () {

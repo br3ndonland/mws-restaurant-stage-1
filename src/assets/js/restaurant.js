@@ -81,9 +81,13 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
     title.textContent = 'Reviews'
     const addReview = document.createElement('a')
     addReview.className = 'header--link'
+    addReview.id = 'addReview'
     addReview.textContent = 'Add'
-    reviewsHeader.appendChild(title)
-    reviewsHeader.appendChild(addReview)
+    const closeReview = document.createElement('a')
+    closeReview.classList.add('header--link', 'd-none')
+    closeReview.id = 'closeReview'
+    closeReview.textContent = 'Close'
+    reviewsHeader.append(title, addReview, closeReview)
     // Add reviews
     const reviewsDiv = document.createElement('div')
     reviewsDiv.className = 'reviews'
@@ -120,6 +124,8 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
 
     // Overlay for adding review
     const overlayDiv = document.getElementById('overlay-div')
+    const overlayTitle = document.createElement('h3')
+    overlayTitle.textContent = `Submit review for ${restaurant.name}`
     const nameDiv = document.createElement('div')
     const reviewName = document.createElement('h4')
     reviewName.textContent = 'Your name'
@@ -149,13 +155,22 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
     commentsText.rows = '10'
     commentsDiv.append(commentsTitle, commentsText)
     const submitBtn = document.createElement('button')
-    submitBtn.id = 'btnSaveReview'
+    submitBtn.id = 'submitBtn'
     submitBtn.className = 'restaurant__more'
     submitBtn.textContent = 'Submit review'
-    submitBtn.addEventListener('click', () => submitReview())
-    overlayDiv.append(nameDiv, ratingDiv, commentsDiv, submitBtn)
+    submitBtn.addEventListener('click', () => DBHelper.postReview(restaurant))
+    overlayDiv.append(overlayTitle, nameDiv, ratingDiv, commentsDiv, submitBtn)
     reviewsHeader.append(overlayDiv)
-    addReview.addEventListener('click', () => overlayDiv.classList.toggle('d-none'))
+    addReview.addEventListener('click', () => {
+      overlayDiv.classList.toggle('d-none')
+      addReview.classList.toggle('d-none')
+      closeReview.classList.toggle('d-none')
+    })
+    closeReview.addEventListener('click', () => {
+      overlayDiv.classList.toggle('d-none')
+      addReview.classList.toggle('d-none')
+      closeReview.classList.toggle('d-none')
+    })
   } catch (e) {
     throw Error(e)
   }
@@ -216,18 +231,3 @@ document.addEventListener('DOMContentLoaded', () => {
   DBHelper.createDatabase()
   initMap()
 })
-
-const submitReview = () => {
-  try {
-    // Collect info for POST request
-    const name = document.getElementById('reviewName').value
-    const rating = document.getElementById('reviewRating').value
-    const comment = document.getElementById('reviewComment').value
-    console.log(`A review is being submitted by ${name} from the submitReview function in restaurant.js`)
-    DBHelper.saveReview(self.restaurant.id, name, rating, comment, () => {
-      window.location.href = `/restaurant.html?id=${self.restaurant.id}`
-    })
-  } catch (e) {
-    throw Error(e)
-  }
-}
