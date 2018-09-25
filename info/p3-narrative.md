@@ -26,6 +26,7 @@ Brendon Smith
 - [Syncing offline and online data](#syncing-offline-and-online-data)
   - [Check for network connection](#check-for-network-connection)
   - [Sync favorites](#sync-favorites)
+  - [Sync reviews](#sync-reviews)
 - [Other changes](#other-changes)
   - [Caching map tiles](#caching-map-tiles)
 - [Performance](#performance)
@@ -705,6 +706,14 @@ Brendon Smith
   }
   ```
 
+### Sync reviews
+
+- This was relatively easy. I just adapted `DBHelper.syncFavorites()`.
+- I had some trouble getting reviews to show up on the server.
+  - I had to `JSON.stringify()` the review content.
+  - The server is only configured to display 30 reviews. The *config/blueprints.js* file `defaultLimit: 30` can be altered.
+  - I also saw that, even if reviews weren't showing up in the array at [http://localhost:1337/reviews](http://localhost:1337/reviews), you can see them by entering the review ID, like [http://localhost:1337/reviews/31](http://localhost:1337/reviews/31).
+
 ## Other changes
 
 ### Caching map tiles
@@ -712,7 +721,6 @@ Brendon Smith
 - I also noticed I wasn't properly caching map tiles. This is a very common problem.
   - Leaflet doesn't provide good ways to cache map tiles or create a static map.
   - Mapbox does offer a [static map](https://www.mapbox.com/help/static-api-playground/), but if it's added through the leaflet tile option it gets repeated instead of showing a single image. Also note that if you use the `L.tilelayer({errorTileUrl: ''})` option, it will attempt to fetch the markers from there as well.
-- I addressed this issue by also creating static maps. *TODO*
 
 ## Performance
 
@@ -722,3 +730,4 @@ My app was already meeting the performance benchmarks during project 2.
 
 - It's difficult to debug with all the caching.
 - Working with IndexedDB was utter torture. In particular, it makes storing and working with JSON unnecessarily difficult. It's like the worst aspects of databases, and the worst aspects of browsers, together in one API.
+- Caching map tiles is error-prone.

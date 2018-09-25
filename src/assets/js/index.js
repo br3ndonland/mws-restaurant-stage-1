@@ -169,8 +169,12 @@ const resetRestaurants = (restaurants) => {
 document.addEventListener('DOMContentLoaded', () => {
   DBHelper.createDatabase()
   DBHelper.syncFavorites()
+  DBHelper.syncReviews()
   initMap()
   fetchNeighborhoods()
   fetchCuisines()
 })
-window.addEventListener('online', () => DBHelper.syncFavorites())
+window.addEventListener('online', () => {
+  DBHelper.syncFavorites()
+  DBHelper.syncReviews()
+})

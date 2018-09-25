@@ -248,7 +248,8 @@ class DBHelper {
         createdAt: Date.now(),
         name: name,
         rating: Number(rating),
-        restaurant_id: restaurant.id
+        restaurant_id: restaurant.id,
+        updatedAt: Date.now()
       }
       if ('indexedDB' in window) {
         // POST changes to IndexedDB
@@ -258,23 +259,24 @@ class DBHelper {
         const keys = await store.getAllKeys()
         const key = Number(keys.length + 1)
         await store.put(body, key)
-      } else {
+        // } else {
         // If IndexedDB is not present, attempt to POST changes directly to server API
-        const url = DBHelper.DATABASE_URL_REVIEWS
         const params = {
-          body: body,
+          body: JSON.stringify(body),
           method: 'POST'
         }
-        fetch(url, params)
+        fetch(DBHelper.DATABASE_URL_REVIEWS, params)
+        console.log(`POST review for restaurant ID ${body.restaurant_id} by ${body.name}.`)
       }
       window.location.href = `/restaurant.html?id=${self.restaurant.id}`
       // Sync with server
-      DBHelper.syncFavorites()
+      DBHelper.syncReviews()
     } catch (e) {
       throw Error(e)
     }
   }
 
+  // Static method to sync offline favorites in IndexedDB with online favorites on server
   static async syncFavorites () {
     try {
       // Ping server to check for connection
@@ -283,13 +285,11 @@ class DBHelper {
       if (pong.ok === true) {
         // Fetch data from server
         const serverRestaurants = await (await ping).json()
-        console.log(serverRestaurants)
         // Fetch data from IndexedDB
         const db = await idb.open('udacity-google-mws-idb', 1)
         const tx = db.transaction('restaurants', 'readonly')
         const store = tx.objectStore('restaurants')
         const restaurants = await store.getAll()
-        console.log(restaurants)
         // Compare data for each restaurant. If favorite status is different, PUT to server API.
         restaurants.forEach((restaurant, i) => {
           const serverRestaurant = serverRestaurants[i]
@@ -297,6 +297,39 @@ class DBHelper {
             fetch(`${DBHelper.DATABASE_URL}/${restaurant.id}/?is_favorite=${restaurant.is_favorite}`, {method: 'PUT'})
             console.log(`PUT change for restaurant ${restaurant.name}`)
           }
+        })
+      }
+    } catch (e) {
+      throw Error(e)
+    }
+  }
+
+  // Static method to sync reviews in IndexedDB with online reviews on server
+  static async syncReviews () {
+    try {
+      // Ping server to check for connection
+      const ping = fetch(DBHelper.DATABASE_URL_REVIEWS)
+      const pong = await (await ping)
+      if (pong.ok === true) {
+        // Fetch data from server
+        const serverReviews = await (await ping).json()
+        // Fetch data from IndexedDB
+        const db = await idb.open('udacity-google-mws-idb', 1)
+        const tx = db.transaction('reviews', 'readonly')
+        const store = tx.objectStore('reviews')
+        const reviews = await store.getAll()
+        const post = review => {
+          const params = {
+            body: JSON.stringify(review),
+            method: 'POST'
+          }
+          fetch(DBHelper.DATABASE_URL_REVIEWS, params)
+          console.log(`Sync review for restaurant ID ${review.restaurant_id} by ${review.name}.`)
+        }
+        // Compare each review between IndexedDB and server. POST if not on server or updated in IndexedDB.
+        reviews.forEach((review, i) => {
+          const serverReview = serverReviews[i]
+          if (!serverReview) { post(review) } else if (review.updatedAt !== serverReview.updatedAt) { post(review) }
         })
       }
     } catch (e) {

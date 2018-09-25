@@ -61,19 +61,19 @@ self.addEventListener('fetch', event => {
 self.addEventListener('fetch', event => {
   let cacheRequest = event.request
   let cacheUrlObj = new URL(event.request.url)
-  if (event.request.method === 'GET' && event.request.url.indexOf('restaurant.html') > -1) {
-    const cacheURL = 'restaurant.html'
-    cacheRequest = new Request(cacheURL)
-  }
   if (cacheUrlObj.hostname !== 'localhost') {
     event.request.mode = 'no-cors'
+  }
+  if (event.request.url.indexOf('restaurant.html') > -1) {
+    const cacheURL = 'restaurant.html'
+    cacheRequest = new Request(cacheURL)
   }
   event.respondWith(caches.match(cacheRequest)
     .then(response => {
       return (response || fetch(event.request).then(fetchResponse => {
         return caches.open(cacheID)
           .then(cache => {
-            cache.put(event.request, fetchResponse.clone())
+            // cache.put(event.request, fetchResponse.clone())
             return fetchResponse
           })
       }).catch(error => {

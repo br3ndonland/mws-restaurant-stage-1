@@ -230,6 +230,10 @@ const initMap = () => {
 document.addEventListener('DOMContentLoaded', () => {
   DBHelper.createDatabase()
   DBHelper.syncFavorites()
+  DBHelper.syncReviews()
   initMap()
 })
-window.addEventListener('online', () => DBHelper.syncFavorites())
+window.addEventListener('online', () => {
+  DBHelper.syncFavorites()
+  DBHelper.syncReviews()
+})
