@@ -82,10 +82,12 @@ const fillRestaurantHTML = (restaurant = self.restaurant) => {
     const addReview = document.createElement('a')
     addReview.className = 'header--link'
     addReview.id = 'addReview'
+    addReview.setAttribute('aria-label', 'Form to add review')
     addReview.textContent = 'Add'
     const closeReview = document.createElement('a')
     closeReview.classList.add('header--link', 'd-none')
     closeReview.id = 'closeReview'
+    closeReview.setAttribute('aria-label', 'Close review form')
     closeReview.textContent = 'Close'
     reviewsHeader.append(title, addReview, closeReview)
     // Add reviews
