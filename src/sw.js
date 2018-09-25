@@ -1,6 +1,5 @@
-// ~~~~~~~~~~~~~~~ Service Worker for restaurant reviews app ~~~~~~~~~~~~~~~ //
+// ~~~~~~~~~~~~~~~~~~~~~~~~~ Service Worker for restaurant reviews app ~~~~~~~~~~~~~~~~~~~~~~~~~ //
 /* eslint-env serviceworker */
-
 // Set up cache ID variable
 const cacheID = 'udacity-google-mws-v1'
 
@@ -40,31 +39,41 @@ self.addEventListener('install', event => {
     '/assets/js/index.js',
     '/assets/js/restaurant.js'
   ]
-  console.log('Installing Service Worker and caching static assets')
   event.waitUntil(caches.open(cacheID).then(cache => {
     return cache.addAll(filesToCache).catch(error => {
       console.log(`Caching failed: ${error}.`)
     })
   }))
 })
-
+/*
+self.addEventListener('fetch', event => {
+  // Based on https://developer.mozilla.org/en-US/docs/Web/API/Cache/match
+  // We only want to call event.respondWith() if this is a GET request for an HTML document.
+  if (event.request.method === 'GET' && event.request.headers.get('accept').indexOf('text/html') !== -1) {
+    console.log('Handling fetch event for', event.request.url)
+    event.respondWith(fetch(event.request)
+      .catch(e => console.error('Fetch failed; returning offline page instead.', e))
+    )
+  }
+})
+ */
 // Fetch: Intercept network fetch request and return resources from cache
 self.addEventListener('fetch', event => {
   let cacheRequest = event.request
   let cacheUrlObj = new URL(event.request.url)
+  if (cacheUrlObj.hostname !== 'localhost') {
+    event.request.mode = 'no-cors'
+  }
   if (event.request.url.indexOf('restaurant.html') > -1) {
     const cacheURL = 'restaurant.html'
     cacheRequest = new Request(cacheURL)
-  }
-  if (cacheUrlObj.hostname !== 'localhost') {
-    event.request.mode = 'no-cors'
   }
   event.respondWith(caches.match(cacheRequest)
     .then(response => {
       return (response || fetch(event.request).then(fetchResponse => {
         return caches.open(cacheID)
           .then(cache => {
-            cache.put(event.request, fetchResponse.clone())
+            // cache.put(event.request, fetchResponse.clone())
             return fetchResponse
           })
       }).catch(error => {

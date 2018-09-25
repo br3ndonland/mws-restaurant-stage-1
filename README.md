@@ -27,9 +27,9 @@ Brendon Smith
 
 ## Description
 
-This is a Progressive Web Application (PWA) that displays a list of restaurants and associated information. I completed this project for my [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024).
+This is a Progressive Web Application (PWA) (see [Google](https://developers.google.com/web/progressive-web-apps/) and [Mozilla](https://developer.mozilla.org/en-US/docs/Web/Apps/Progressive)) that displays a list of restaurants and associated information. I completed this project for my [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024).
 
-![Screenshot of restaurant reviews app homepage on desktop](info/img/udacity-google-mws-home-20180716.jpg)
+![Screenshot of restaurant reviews app homepage on desktop](info/img/udacity-google-mws-p1-20180716-01.jpg)
 
 I was awarded a scholarship to this Nanodegree program after completing the [Udacity Grow with Google](https://www.udacity.com/grow-with-google) Scholarship challenge course, in the Intermediate Web Developer track. Materials from the challenge course are available in my [udacity-google repo](https://github.com/br3ndonland/udacity-google).
 
@@ -40,22 +40,23 @@ I was awarded a scholarship to this Nanodegree program after completing the [Uda
 - [info/](info): Project documentation, reviews, and computational narratives.
 - [lessons/](lessons): Lesson notes, divided into subdirectories for each part of the Nanodegree program.
 - [src/](src): Application source files.
-  - [assets](assets)
-    - [css](assets/css)
-      - [styles.css](assets/css/styles.css): Styles used in application. Features CSS Grid, variables ("custom properties"), and BEM (Block Element Modifier).
-    - [img](assets/img): Images used in application.
-    - [js](assets/js)
-      - [dbhelper.js](assets/js/dbhelper.js): JavaScript class constructor with static methods to serve data to the app.
-      - [index.js](assets/js/index.js): JavaScript for application homepage.
-      - [restaurant.js](assets/js/restaurant.js): JavaScript for restaurant details page.
-  - [data](data)
-    - [restaurants.json](data/restaurants.json): Restaurant data in JSON format.
+  - [assets](src/assets)
+    - [css](src/assets/css)
+      - [styles.css](src/assets/css/styles.css): Styles used in application. Features CSS Grid, variables ("custom properties"), and BEM (Block Element Modifier).
+    - [img](src/assets/img): Images used in application.
+    - [js](src/assets/js)
+      - [dbhelper.js](src/assets/js/dbhelper.js): JavaScript class constructor with static methods to serve data to the app.
+      - [index.js](src/assets/js/index.js): JavaScript for application homepage.
+      - [restaurant.js](src/assets/js/restaurant.js): JavaScript for restaurant details page.
+  - [data](src/data)
+    - [restaurants.json](src/data/restaurants.json): Restaurant data in JSON format.
 - [.babelrc](.babelrc): Configuration file for [Babel](https://babeljs.io/).
 - [.eslintrc](.eslintrc): Configuration file for [ESLint](https://eslint.org/). I use [JavaScript Standard Style](https://standardjs.com/) with the [vscode extension](https://marketplace.visualstudio.com/items?itemName=chenxsan.vscode-standardjs). The ESLint file is used by [Codacy](https://www.codacy.com/) for continuous integration of code quality reviews.
 - [.gitignore](.gitignore): Instructions to Git to exclude certain files from commits.
-- [index.html](index.html): Application homepage.
-- [restaurant.html](restaurant.html): Restaurant details page.
-- [sw.js](sw.js): Service Worker for offline caching.
+- [index.html](src/index.html): Application homepage.
+- [manifest.webmanifest](src/manifest.webmanifest): Web app manifest. Communicates app metadata to the browser and makes the app installable. The *.manifest* extension has been officially recognized in the [W3C spec](https://w3c.github.io/manifest/). See [Google](https://developers.google.com/web/fundamentals/web-app-manifest/) and [MDN](https://developer.mozilla.org/en-US/docs/Web/Apps/Progressive/Installable_PWAs) for more.
+- [restaurant.html](src/restaurant.html): Restaurant details page.
+- [sw.js](src/sw.js): Service Worker for offline caching.
 - [README.md](README.md): This file, a concise description of the repository.
 
 ## Projects
@@ -171,10 +172,13 @@ We use a different Node server to deliver the data API.
 
     ```json
     {
-      "restaurant_id": <restaurant_id>,
+      "comments": <comment_text>,
+      "createdAt": <1504095567183>,
+      "id": <id>,
       "name": <reviewer_name>,
       "rating": <rating>,
-      "comments": <comment_text>
+      "restaurant_id": <restaurant_id>,
+      "updatedAt": <1504095567183>
     }
     ```
 

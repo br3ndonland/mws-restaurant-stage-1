@@ -1,23 +1,5 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~ JavaScript for restaurant reviews homepage ~~~~~~~~~~~~~~~~~~~~~~~~ //
 
-// Register service worker
-if ('serviceWorker' in navigator) {
-  console.log(`Registering Service Worker.`)
-  navigator.serviceWorker.register('/sw.js').then(reg => {
-    console.log(`Service Worker registration successful for ${reg.scope}`)
-  }).catch(e => {
-    console.log(`Registration failed with error ${e}`)
-  })
-}
-
-// Fetch neighborhoods and cuisines as soon as the page is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  DBHelper.createDatabase()
-  initMap()
-  fetchNeighborhoods()
-  fetchCuisines()
-})
-
 // Initialize Leaflet map with function called from HTML
 const initMap = () => {
   self.newMap = L.map('map', {
@@ -41,11 +23,11 @@ const initMap = () => {
 // Add markers for current restaurants to the map
 const addMarkersToMap = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
-    const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.newMap)
-    marker.on('click', onClick)
-    function onClick () {
+    const marker = DBHelper.mapMarker(restaurant, self.newMap)
+    const onClick = () => {
       window.location.href = marker.options.url
     }
+    marker.on('click', onClick)
     self.markers.push(marker)
   })
 }
@@ -61,13 +43,11 @@ const fetchNeighborhoods = () => {
     }
   })
 }
-
-// Set neighborhoods HTML
 const fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
   const select = document.getElementById('neighborhoods-select')
   neighborhoods.forEach(neighborhood => {
     const option = document.createElement('option')
-    option.innerHTML = neighborhood
+    option.textContent = neighborhood
     option.value = neighborhood
     select.append(option)
   })
@@ -88,67 +68,71 @@ const fillCuisinesHTML = (cuisines = self.cuisines) => {
   const select = document.getElementById('cuisines-select')
   cuisines.forEach(cuisine => {
     const option = document.createElement('option')
-    option.innerHTML = cuisine
+    option.textContent = cuisine
     option.value = cuisine
     select.append(option)
   })
 }
 
-// Reset HTML and map markers
-const resetRestaurants = (restaurants) => {
-  // Remove all restaurants
-  self.restaurants = []
-  const ul = document.getElementById('restaurant-list')
-  ul.innerHTML = ''
-  // Remove all map markers
-  if (self.markers) {
-    self.markers.forEach(marker => marker.remove())
-  }
-  self.markers = []
-  self.restaurants = restaurants
-}
+// Create and fill HTML for restaurants
+const createRestaurantHTML = (restaurant) => {
+  try {
+    const div = document.createElement('div')
+    div.className = 'restaurant'
 
-// Create HTML for restaurants
+    const image = document.createElement('img')
+    image.className = 'restaurant__img lazy'
+    image.alt = `Restaurant image for ${restaurant.name}.`
+    image.src = DBHelper.imageUrlForRestaurant(restaurant)
+
+    const header = document.createElement('div')
+    header.className = 'restaurant__header'
+    const name = document.createElement('h2')
+    name.textContent = restaurant.name
+    name.className = 'restaurant__header'
+    const favoriteButton = document.createElement('button')
+    favoriteButton.className = 'restaurant__header header--star'
+    favoriteButton.id = `restaurant-${restaurant.id}`
+    if (restaurant.is_favorite === 'true') {
+      favoriteButton.innerHTML = '&#9733'
+      favoriteButton.setAttribute('aria-label', `Remove ${restaurant.name} from favorites`)
+    } else {
+      favoriteButton.innerHTML = '&#9734'
+      favoriteButton.setAttribute('aria-label', `Add ${restaurant.name} to favorites`)
+    }
+    favoriteButton.addEventListener('click', () => DBHelper.toggleFavorite(restaurant))
+    header.append(name, favoriteButton)
+
+    const detailsDiv = document.createElement('div')
+    const infoDiv = document.createElement('div')
+    const neighborhood = document.createElement('p')
+    neighborhood.textContent = restaurant.neighborhood
+    neighborhood.className = 'restaurant__neighborhood'
+    const address = document.createElement('p')
+    address.textContent = restaurant.address
+    address.className = 'restaurant__address'
+    infoDiv.append(neighborhood, address)
+    detailsDiv.append(infoDiv)
+
+    const more = document.createElement('a')
+    more.textContent = 'View Details'
+    more.className = 'restaurant__more'
+    more.setAttribute('aria-label', `Details button for ${restaurant.name}`)
+    more.href = DBHelper.urlForRestaurant(restaurant)
+
+    div.append(image, header, detailsDiv, more)
+
+    return div
+  } catch (e) {
+    throw Error(e)
+  }
+}
 const fillRestaurantsHTML = (restaurants = self.restaurants) => {
-  const ul = document.getElementById('restaurant-list')
+  const list = document.getElementById('restaurant-list')
   restaurants.forEach(restaurant => {
-    ul.append(createRestaurantHTML(restaurant))
+    list.append(createRestaurantHTML(restaurant))
   })
   addMarkersToMap()
-}
-const createRestaurantHTML = (restaurant) => {
-  const li = document.createElement('div')
-  li.className = 'restaurant'
-
-  const image = document.createElement('img')
-  image.className = 'restaurant__img lazy'
-  image.alt = `Restaurant image for ${restaurant.name}.`
-  image.src = DBHelper.imageUrlForRestaurant(restaurant)
-  li.append(image)
-
-  const name = document.createElement('h2')
-  name.innerHTML = restaurant.name
-  name.className = 'restaurant__header'
-  li.append(name)
-
-  const neighborhood = document.createElement('p')
-  neighborhood.innerHTML = restaurant.neighborhood
-  neighborhood.className = 'restaurant__neighborhood'
-  li.append(neighborhood)
-
-  const address = document.createElement('p')
-  address.innerHTML = restaurant.address
-  address.className = 'restaurant__address'
-  li.append(address)
-
-  const more = document.createElement('a')
-  more.innerHTML = 'View Details'
-  more.className = 'restaurant__more'
-  more.setAttribute('aria-label', 'details button')
-  more.href = DBHelper.urlForRestaurant(restaurant)
-  li.append(more)
-
-  return li
 }
 
 // Update page and map for current restaurants
@@ -168,3 +152,29 @@ const updateRestaurants = () => {
     }
   })
 }
+
+// Reset HTML and map markers
+const resetRestaurants = (restaurants) => {
+  self.restaurants = []
+  const list = document.getElementById('restaurant-list')
+  list.textContent = ''
+  if (self.markers) {
+    self.markers.forEach(marker => marker.remove())
+  }
+  self.markers = []
+  self.restaurants = restaurants
+}
+
+// Fetch neighborhoods and cuisines as soon as the page is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  DBHelper.createDatabase()
+  DBHelper.syncFavorites()
+  DBHelper.syncReviews()
+  initMap()
+  fetchNeighborhoods()
+  fetchCuisines()
+})
+window.addEventListener('online', () => {
+  DBHelper.syncFavorites()
+  DBHelper.syncReviews()
+})
