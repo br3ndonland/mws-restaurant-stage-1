@@ -9,16 +9,6 @@ self.addEventListener('install', event => {
     '/',
     '/index.html',
     '/restaurant.html',
-    '/restaurant.html?id=1',
-    '/restaurant.html?id=2',
-    '/restaurant.html?id=3',
-    '/restaurant.html?id=4',
-    '/restaurant.html?id=5',
-    '/restaurant.html?id=6',
-    '/restaurant.html?id=7',
-    '/restaurant.html?id=8',
-    '/restaurant.html?id=9',
-    '/restaurant.html?id=10',
     '/sw.js',
     '/assets/css/styles.css',
     '/assets/img/',
@@ -45,41 +35,20 @@ self.addEventListener('install', event => {
     })
   }))
 })
-/*
-self.addEventListener('fetch', event => {
-  // Based on https://developer.mozilla.org/en-US/docs/Web/API/Cache/match
-  // We only want to call event.respondWith() if this is a GET request for an HTML document.
-  if (event.request.method === 'GET' && event.request.headers.get('accept').indexOf('text/html') !== -1) {
-    console.log('Handling fetch event for', event.request.url)
-    event.respondWith(fetch(event.request)
-      .catch(e => console.error('Fetch failed; returning offline page instead.', e))
-    )
-  }
-})
- */
 // Fetch: Intercept network fetch request and return resources from cache
 self.addEventListener('fetch', event => {
   let cacheRequest = event.request
   let cacheUrlObj = new URL(event.request.url)
-  if (cacheUrlObj.hostname !== 'localhost') {
-    event.request.mode = 'no-cors'
-  }
+  if (cacheUrlObj.hostname !== 'localhost') { event.request.mode = 'no-cors' }
   if (event.request.url.indexOf('restaurant.html') > -1) {
     const cacheURL = 'restaurant.html'
     cacheRequest = new Request(cacheURL)
   }
-  event.respondWith(caches.match(cacheRequest)
-    .then(response => {
-      return (response || fetch(event.request).then(fetchResponse => {
-        return caches.open(cacheID)
-          .then(cache => {
-            // cache.put(event.request, fetchResponse.clone())
-            return fetchResponse
-          })
-      }).catch(error => {
-        throw (error)
-      })
-      )
-    })
+  event.respondWith(caches.match(cacheRequest).then(response => {
+    return (response || fetch(event.request).then(fetchResponse => {
+      return caches.open(cacheID).then(() => { return fetchResponse })
+    }).catch(error => { throw (error) })
+    )
+  })
   )
 })
