@@ -27,13 +27,14 @@ Brendon Smith
 
 ## Description
 
-This is a Progressive Web Application (PWA) (see [Google](https://developers.google.com/web/progressive-web-apps/) and [Mozilla](https://developer.mozilla.org/en-US/docs/Web/Apps/Progressive)) that displays a list of restaurants and associated information. I completed this project for my [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024).
-
-![Screenshot of restaurant reviews app homepage on desktop](info/img/udacity-google-mws-p1-20180716-01.jpg)
-
-I was awarded a scholarship to this Nanodegree program after completing the [Udacity Grow with Google](https://www.udacity.com/grow-with-google) Scholarship challenge course, in the Intermediate Web Developer track. Materials from the challenge course are available in my [udacity-google repo](https://github.com/br3ndonland/udacity-google).
+Mobile Web Specialists are trained in building **Progressive Web Apps** (PWAs, see [Google](https://developers.google.com/web/progressive-web-apps/) and [Mozilla](https://developer.mozilla.org/en-US/docs/Web/Apps/Progressive)). PWAs are like a combination of web apps and native apps, improving on the best features of each. I learned how to build PWAs in the [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024).
+I was awarded a scholarship to this Nanodegree program after completing the [Grow with Google](https://grow.google/) Udacity challenge course, intermediate web developer track, in the top 10% of 10,000 students. Materials from the challenge course are available in my [udacity-google repo](https://github.com/br3ndonland/udacity-google).
 
 ![Udacity Google Mobile Web Specialist scholarship email](info/img/udacity-google-mws-award.png)
+
+In this Nanodegree program, I built a restaurant reviews PWA that displays restaurant locations and info. The app provides offline access through the Service Worker, IndexedDB, and web manifest files. Users can add favorites and reviews for restaurants. If changes are made offline, they sync to the web server when network access is restored.
+
+![Screenshot of restaurant reviews app homepage on desktop](info/img/udacity-google-mws-iPhone.png)
 
 ## Repository contents
 
@@ -54,7 +55,7 @@ I was awarded a scholarship to this Nanodegree program after completing the [Uda
 - [.eslintrc](.eslintrc): Configuration file for [ESLint](https://eslint.org/). I use [JavaScript Standard Style](https://standardjs.com/) with the [vscode extension](https://marketplace.visualstudio.com/items?itemName=chenxsan.vscode-standardjs). The ESLint file is used by [Codacy](https://www.codacy.com/) for continuous integration of code quality reviews.
 - [.gitignore](.gitignore): Instructions to Git to exclude certain files from commits.
 - [index.html](src/index.html): Application homepage.
-- [manifest.webmanifest](src/manifest.webmanifest): Web app manifest. Communicates app metadata to the browser and makes the app installable. The *.manifest* extension has been officially recognized in the [W3C spec](https://w3c.github.io/manifest/). See [Google](https://developers.google.com/web/fundamentals/web-app-manifest/) and [MDN](https://developer.mozilla.org/en-US/docs/Web/Apps/Progressive/Installable_PWAs) for more.
+- [manifest.webmanifest](src/manifest.webmanifest): Web app manifest. Communicates app metadata to the browser and makes the app installable. The *.webmanifest* extension has been officially recognized in the [W3C spec](https://w3c.github.io/manifest/). See [Google](https://developers.google.com/web/fundamentals/web-app-manifest/) and [MDN](https://developer.mozilla.org/en-US/docs/Web/Apps/Progressive/Installable_PWAs) for more.
 - [restaurant.html](src/restaurant.html): Restaurant details page.
 - [sw.js](src/sw.js): Service Worker for offline caching.
 - [README.md](README.md): This file, a concise description of the repository.
@@ -80,7 +81,7 @@ Browse to [localhost:8000](http://localhost:8000) to see the app.
 
 ### Project 2
 
-#### Data API
+#### Data API in project 2
 
 In project 2, we use a Node server to deliver the data API.
 
@@ -93,6 +94,8 @@ In project 2, we use a Node server to deliver the data API.
   npm i sails -g
   node server
   ```
+
+#### Web server in project 2
 
 - Start the web server in the *src/* subdirectory.
 
@@ -109,9 +112,9 @@ In project 2, we use a Node server to deliver the data API.
 
 - The app stores the JSON data in IndexedDB for offline access.
 
-#### Performance
+#### Performance in project 2
 
-We were required to meet Lighthouse performance benchmarks for progressive web apps:
+We were required to meet [Lighthouse](https://developers.google.com/web/tools/lighthouse/) performance benchmarks for progressive web apps:
 
 - **Performance** ≥70
 - **Progressive Web App** ≥90
@@ -125,7 +128,7 @@ My app's Lighthouse scores:
 
 ### Project 3
 
-#### Data API setup
+#### Data API in project 3
 
 We use a different Node server to deliver the data API.
 
@@ -139,69 +142,7 @@ We use a different Node server to deliver the data API.
   node server
   ```
 
-#### Data API endpoints
-
-- The app calls the data server on port `1337`.
-- The data server presents a JSON API.
-
-##### `GET`
-
-- Get all restaurants: `http://localhost:1337/restaurants/`
-- Get favorite restaurants: `http://localhost:1337/restaurants/?is_favorite=true`
-- Get a restaurant by id: `http://localhost:1337/restaurants/<restaurant_id>`
-- Get all reviews for a restaurant: `http://localhost:1337/reviews/?restaurant_id=<restaurant_id>`
-- Get all restaurant reviews: `http://localhost:1337/reviews/`
-  - Reviews are stored as JSON with the following format:
-
-    ```json
-    {
-      "restaurant_id": <restaurant_id>,
-      "name": <reviewer_name>,
-      "rating": <rating>,
-      "comments": <comment_text>
-    }
-    ```
-
-- Get a restaurant review by id: `http://localhost:1337/reviews/<review_id>`
-- Get all reviews for a restaurant: `http://localhost:1337/reviews/?restaurant_id=<restaurant_id>`
-
-##### `POST`
-
-- Create a new restaurant review: `http://localhost:1337/reviews/`
-  - Reviews are stored as JSON with the following format:
-
-    ```json
-    {
-      "comments": <comment_text>,
-      "createdAt": <1504095567183>,
-      "id": <id>,
-      "name": <reviewer_name>,
-      "rating": <rating>,
-      "restaurant_id": <restaurant_id>,
-      "updatedAt": <1504095567183>
-    }
-    ```
-
-##### `PUT`
-
-- Favorite a restaurant: `http://localhost:1337/restaurants/<restaurant_id>/?is_favorite=true`
-- Un-favorite a restaurant: `http://localhost:1337/restaurants/<restaurant_id>/?is_favorite=false`
-- Update a restaurant review: `http://localhost:1337/reviews/<review_id>`
-  - Updated reviews have the following JSON format:
-
-    ```json
-    {
-      "name": <reviewer_name>,
-      "rating": <rating>,
-      "comments": <comment_text>
-    }
-    ```
-
-##### `DELETE`
-
-- Delete reviews: `http://localhost:1337/reviews/<review_id>`
-
-#### Web server
+#### Web server in project 3
 
 - Start the web server in the *src/* subdirectory.
 
@@ -212,13 +153,14 @@ We use a different Node server to deliver the data API.
 
 - Browse to [localhost:8000](http://localhost:8000) to see the app.
 
-#### Reviews
+#### Favorites and reviews
 
-- This project adds review capabilities to the app.
+- Users can now favorite restaurants and add reviews.
+- Favorites and reviews are saved to IndexedDB, then synced to the data server when network access is present.
 
 #### Performance in project 3
 
-We were required to meet Lighthouse performance benchmarks for progressive web apps:
+We were required to meet [Lighthouse](https://developers.google.com/web/tools/lighthouse/) performance benchmarks for progressive web apps:
 
 - **Performance** ≥90
 - **Progressive Web App** ≥90
@@ -226,6 +168,6 @@ We were required to meet Lighthouse performance benchmarks for progressive web a
 
 My app's Lighthouse scores:
 
-- **Performance**
-- **Progressive Web App**
-- **Accessibility**
+- **Performance** 92
+- **Progressive Web App** 92
+- **Accessibility** 100

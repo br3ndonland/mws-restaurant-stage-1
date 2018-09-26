@@ -17,6 +17,7 @@ Brendon Smith
 - [Project overview](#project-overview)
   - [Description](#description)
   - [Specification](#specification)
+  - [Data API endpoints](#data-api-endpoints)
   - [Requirements](#requirements)
 - [Project instructions](#project-instructions)
 - [Project rubric](#project-rubric)
@@ -39,6 +40,68 @@ You will be provided code for an updated [Node development server](https://githu
 You can find the documentation for the new server in the README file for the server.
 
 Now that you’ve connected your application to an external database, it’s time to begin adding new features to your app.
+
+### Data API endpoints
+
+- The app calls the data server on port `1337`.
+- The data server presents a JSON API.
+
+#### `GET`
+
+- Get all restaurants: `http://localhost:1337/restaurants/`
+- Get favorite restaurants: `http://localhost:1337/restaurants/?is_favorite=true`
+- Get a restaurant by id: `http://localhost:1337/restaurants/<restaurant_id>`
+- Get all reviews for a restaurant: `http://localhost:1337/reviews/?restaurant_id=<restaurant_id>`
+- Get all restaurant reviews: `http://localhost:1337/reviews/`
+  - Reviews are stored as JSON with the following format:
+
+    ```json
+    {
+      "restaurant_id": <restaurant_id>,
+      "name": <reviewer_name>,
+      "rating": <rating>,
+      "comments": <comment_text>
+    }
+    ```
+
+- Get a restaurant review by id: `http://localhost:1337/reviews/<review_id>`
+- Get all reviews for a restaurant: `http://localhost:1337/reviews/?restaurant_id=<restaurant_id>`
+
+#### `POST`
+
+- Create a new restaurant review: `http://localhost:1337/reviews/`
+  - Reviews are stored as JSON with the following format:
+
+    ```json
+    {
+      "comments": <comment_text>,
+      "createdAt": <1504095567183>,
+      "id": <id>,
+      "name": <reviewer_name>,
+      "rating": <rating>,
+      "restaurant_id": <restaurant_id>,
+      "updatedAt": <1504095567183>
+    }
+    ```
+
+#### `PUT`
+
+- Favorite a restaurant: `http://localhost:1337/restaurants/<restaurant_id>/?is_favorite=true`
+- Un-favorite a restaurant: `http://localhost:1337/restaurants/<restaurant_id>/?is_favorite=false`
+- Update a restaurant review: `http://localhost:1337/reviews/<review_id>`
+  - Updated reviews have the following JSON format:
+
+    ```json
+    {
+      "name": <reviewer_name>,
+      "rating": <rating>,
+      "comments": <comment_text>
+    }
+    ```
+
+#### `DELETE`
+
+- Delete reviews: `http://localhost:1337/reviews/<review_id>`
 
 ### Requirements
 
