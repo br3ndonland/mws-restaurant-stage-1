@@ -1,6 +1,13 @@
 {
+  // General
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  // JavaScript
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+  "prettier.semi": false,
   "standard.autoFixOnSave": true,
-  "standard.enable": true,
   "standard.options": {
     "env": {
       "browser": true,

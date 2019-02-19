@@ -60,6 +60,7 @@ In this Nanodegree program, I built a restaurant reviews PWA that displays resta
 - [.babelrc](.babelrc): Configuration file for [Babel](https://babeljs.io/).
 - [.eslintrc](.eslintrc): Configuration file for [ESLint](https://eslint.org/). I use [JavaScript Standard Style](https://standardjs.com/) with the [vscode extension](https://marketplace.visualstudio.com/items?itemName=chenxsan.vscode-standardjs). The ESLint file is used by [Codacy](https://www.codacy.com/) for continuous integration of code quality reviews.
 - [.gitignore](.gitignore): Instructions to Git to exclude certain files from commits.
+- [.prettierrc](.prettierrc): Configuration file for [Prettier](https://prettier.io/) autoformatter.
 - [index.html](src/index.html): Application homepage.
 - [manifest.webmanifest](src/manifest.webmanifest): Web app manifest. Communicates app metadata to the browser and makes the app installable. The *.webmanifest* extension has been officially recognized in the [W3C spec](https://w3c.github.io/manifest/). See [Google](https://developers.google.com/web/fundamentals/web-app-manifest/) and [MDN](https://developer.mozilla.org/en-US/docs/Web/Apps/Progressive/Installable_PWAs) for more.
 - [restaurant.html](src/restaurant.html): Restaurant details page.
