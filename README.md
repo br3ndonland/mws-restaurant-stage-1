@@ -142,7 +142,7 @@ We use a different Node server to deliver the data API.
 - Start the data server:
 
   ```sh
-  cd <PATH>
+  cd path/to/data/server
   npm i
   npm i sails -g
   node server
@@ -150,10 +150,10 @@ We use a different Node server to deliver the data API.
 
 #### Web server in project 3
 
-- Start the web server in the *src/* subdirectory.
+- Start the app's web server in the *src/* subdirectory.
 
   ```sh
-  cd <PATH>/src
+  cd path/to/app/src
   python3 -m http.server 8000
   ```
 
