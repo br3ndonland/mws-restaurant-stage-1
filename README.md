@@ -21,22 +21,14 @@ Brendon Smith
 - [Projects](#projects)
   - [Project 1](#project-1)
   - [Project 2](#project-2)
-    - [Data API in project 2](#data-api-in-project-2)
-    - [Web server in project 2](#web-server-in-project-2)
-    - [IndexedDB](#indexeddb)
-    - [Performance in project 2](#performance-in-project-2)
   - [Project 3](#project-3)
-    - [Data API in project 3](#data-api-in-project-3)
-    - [Web server in project 3](#web-server-in-project-3)
-    - [Favorites and reviews](#favorites-and-reviews)
-    - [Performance in project 3](#performance-in-project-3)
 
 ## Description
 
 Mobile Web Specialists are trained in building **Progressive Web Apps** (PWAs, see [Google](https://developers.google.com/web/progressive-web-apps/), [Mozilla](https://developer.mozilla.org/en-US/docs/Web/Apps/Progressive), and [Medium](https://medium.com/javascript-scene/native-apps-are-doomed-ac397148a2c0)). PWAs are like a combination of web apps and native apps, improving on the best features of each. I learned how to build PWAs in the [Udacity Google Mobile Web Specialist Nanodegree program](https://www.udacity.com/course/mobile-web-specialist-nanodegree--nd024).
 I was awarded a scholarship to this Nanodegree program after completing the [Grow with Google](https://grow.google/) Udacity challenge course, intermediate web developer track, in the top 10% of 10,000 students. Materials from the challenge course are available in my [udacity-google repo](https://github.com/br3ndonland/udacity-google).
 
-![Udacity Google Mobile Web Specialist scholarship email](info/img/udacity-google-mws-award.png)
+<img src="info/img/udacity-google-scholarship.png" alt="Udacity Grow with Google scholarship award" height="300px"> <img src="info/img/udacity-google-mws-award.png" alt="Udacity Google Mobile Web Specialist scholarship email" height="300px">
 
 In this Nanodegree program, I built a restaurant reviews PWA that displays restaurant locations and info. The app provides offline access through the Service Worker, IndexedDB, and web manifest files. Users can add favorites and reviews for restaurants. If changes are made offline, they sync to the web server when network access is restored.
 
